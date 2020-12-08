@@ -1,6 +1,0 @@
-{:paths ["src"]
- :deps
- {clj-antlr {:mvn/version "0.2.6"}
-  orchestra {:mvn/version "2020.07.12-1"}}
- tick {:mvn/version "0.4.26-alpha"}
- meander/epsilon {:mvn/version "0.0.480"}}
