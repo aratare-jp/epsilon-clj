@@ -1,5 +1,6 @@
 (ns altio.core
   (:gen-class)
+  (:require [cprop.core :as cp])
   (:import (com.altio ArrayInitListener
                       ArrayInitParser$InitContext
                       ArrayInitParser$ValueContext ArrayInitLexer ArrayInitParser)
