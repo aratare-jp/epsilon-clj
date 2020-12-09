@@ -5,6 +5,8 @@ Altio is a code generator that aims to be:
 - Interactive
 - Easy to use
 
+![Clojure CI](https://github.com/aratare-tech/altio-core/workflows/Clojure%20CI/badge.svg?branch=master)
+
 # Installation
 TBC
 
