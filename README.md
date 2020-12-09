@@ -6,6 +6,7 @@ Altio is a code generator that aims to be:
 - Easy to use
 
 ![Clojure CI](https://github.com/aratare-tech/altio-core/workflows/Clojure%20CI/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/aratare-tech/altio-core/branch/master/graph/badge.svg?token=RJCEPYBF3I)](https://codecov.io/gh/aratare-tech/altio-core)
 
 # Installation
 TBC
