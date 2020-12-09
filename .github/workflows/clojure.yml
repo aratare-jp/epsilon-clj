@@ -21,8 +21,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./target/coverage
-          file: ./codecov.json
+          file: ./target/coverage/codecov.json
           flags: unittests
           name: altio-unit
           fail_ci_if_error: true
