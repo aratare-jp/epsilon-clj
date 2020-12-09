@@ -21,7 +21,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ../../target/cloverage
+          directory: ./target/coverage
           file: ./codecov.json
           flags: unittests
           name: altio-unit
