@@ -22,7 +22,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ../../target/cloverage
-          file: ./coverage.json
+          file: ./codecov.json
           flags: unittests
           name: altio-unit
           fail_ci_if_error: true
