@@ -27,11 +27,8 @@ It is designed to be model-driven from the ground up, while offering to be a "go
 - **Light:** No flowers or unnecessary things. Altio needs to be lightweight so you can easily use it as a tool or a library.
 - **Informative:** With the REPL and tooling, you can get the right information about your model or templates.
 - **Easy to use:** No tied-in ecosystem, no steep learning curve, no complicated setup.
-- **Fun to use:** Not your typical goal, but from my experience, working with MDSD is exhausting from having to wrestle with Ecore and its wonderful friends. Altio shall not be the same!
 
-Of course, on the other hand, Altio does NOT aim to:
-- Replace your current model-driven generator. Rather, it provides an alternative way of applying MDSD to your project.
-- Go full money-grabbing mode. Altio shall forever stay open and free for all. Period.
+Of course, on the other hand, Altio does NOT aim to be mutually exclusive with other generators. Rather, it provides an alternative way of applying MDSD to your project.
 
 # Features
 - [ ] EDN/JSON for models.
