@@ -34,11 +34,9 @@ Of course, on the other hand, Altio does NOT aim to be mutually exclusive with o
 # Features
 - [ ] EDN/JSON for models.
 - [ ] Simple Altio language for templating.
-
-       - [ ] Altio Templating Language
-       - [ ] Atlio Controlling Language
-       - [ ] Altio General Language
-       
+    - [ ] Altio Templating Language
+    - [ ] Atlio Controlling Language
+    - [ ] Altio General Language
 - [ ] Hot-reload.
 - [ ] REPL for template inspection.
 - [ ] Can be used either as CLI or a library.
