@@ -9,7 +9,9 @@ For more details on Model-Driven Software Development (MDSD), check out [here](h
 # Installation
 TBC
 
-# Rationale
+# What is it?
+> **_Altio_** comes from the Latin word **_altiorem_**, which means "higher".
+
 So why would there be another code generator?
 
 On one hand, we have well-known "ordinary" code generators like [Selmer](https://github.com/yogthos/Selmer) in Clojure land; [StringTemplate](https://www.stringtemplate.org/) or [ThymeLeaf](https://www.thymeleaf.org/) in Java land; [Django](https://docs.djangoproject.com/en/dev/ref/templates/builtins/) in Python; and so on. These generators are fast, well-tested, and will meet every requirement you may have for a code generator. However, they are not model-driven. There are no protected regions, nor anything remotely resemble such feature.
@@ -19,8 +21,7 @@ On the other hand, we have a few code generators that are model-driven, such as 
 - **Complicated**. All current model-driven generators exist within the [Ecore](https://wiki.eclipse.org/Ecore) ecosystem, which is overly complex and raises high learning curve for new learners.
 - **Inflexible**. The Ecore system is not only complicated, but also inflexible such that there is no easy way to tailor its functionality to your workflow. As Eclipse is always required for any kind of operations, CLI-only environments such as CI/CD is either not possible or extremely hard to achieve.
 
-# Goals & Non-goals
-Based on the previous section, this is where Altio comes in.
+This is where Altio comes in.
 
 It is designed to be model-driven from the ground up, while offering to be a "good enough" code generator. As such, it aims to be:
 - **Fast:** As time is gold, the less time developers have to wait, the ~~less time to have sword fights~~ better.
@@ -33,6 +34,10 @@ Of course, on the other hand, Altio does NOT aim to be mutually exclusive with o
 # Features
 - [ ] EDN/JSON for models.
 - [ ] Simple Altio language for templating.
+       - [ ] Altio Templating Language
+       - [ ] Atlio Controlling Language
+       - [ ] Altio General Language
+       
 - [ ] Hot-reload.
 - [ ] REPL for template inspection.
 - [ ] Can be used either as CLI or a library.
