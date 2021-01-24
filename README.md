@@ -37,7 +37,9 @@ Of course, on the other hand, Altio does NOT aim to be mutually exclusive with o
     - [ ] Altio Templating Language
     - [ ] Atlio Controlling Language
     - [ ] Altio General Language
+    - [ ] Altio Migration Language
 - [ ] Hot-reload.
+- [ ] Auto warnings when removing protected regions
 - [ ] REPL for template inspection.
 - [ ] Can be used either as CLI or a library.
 - [ ] Plugin for IntelliJ.
