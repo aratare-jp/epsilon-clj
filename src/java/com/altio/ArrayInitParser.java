@@ -1,4 +1,4 @@
-// Generated from ArrayInit.g4 by ANTLR 4.9
+// Generated from C:/Users/aratare/projects/altio/resources\ArrayInit.g4 by ANTLR 4.9.1
 package com.altio;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ArrayInitParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.9", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -108,6 +108,11 @@ public class ArrayInitParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof ArrayInitListener ) ((ArrayInitListener)listener).exitInit(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ArrayInitVisitor ) return ((ArrayInitVisitor<? extends T>)visitor).visitInit(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final InitContext init() throws RecognitionException {
@@ -168,6 +173,11 @@ public class ArrayInitParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof ArrayInitListener ) ((ArrayInitListener)listener).exitValue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ArrayInitVisitor ) return ((ArrayInitVisitor<? extends T>)visitor).visitValue(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
