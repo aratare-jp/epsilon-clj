@@ -18,7 +18,7 @@ rule Book2Page
 	template : "book2page.egl"
 
 	// Output file
-	target : book.e_id.text + ".html"
+	target : 'inner/' + book.e_id.text + ".html"
 }
 
 rule Library2Page
@@ -26,5 +26,5 @@ rule Library2Page
 
 	template : "library2page.egl"
 
-	target : "index.html"
+	target : "inner/index.html"
 }

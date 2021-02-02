@@ -8,10 +8,10 @@
                  [org.clojure/clojure "1.10.1"]
                  [org.clojure/tools.cli "1.0.194"]
                  [org.clojure/tools.logging "1.0.0"]
-                 [org.antlr/ST4 "4.3.1"]
-                 [org.antlr/antlr4-runtime "4.9"]
-                 ;; https://mvnrepository.com/artifact/org.eclipse.epsilon/epsilon-core
-                 [org.eclipse.epsilon/epsilon-core "1.5.1"]]
+                 [org.eclipse.epsilon/epsilon-core "1.5.1"]
+                 [hawk "0.2.11"]
+                 [mvxcvi/puget "1.3.1"]
+                 [me.raynes/fs "1.4.6"]]
 
   :min-lein-version "2.0.0"
 
