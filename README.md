@@ -1,63 +1,66 @@
-# Altio
+# `epsilon-clj`
+
 ![Clojure CI](https://github.com/aratare-tech/altio-core/workflows/Clojure%20CI/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/aratare-tech/altio-core/branch/master/graph/badge.svg?token=RJCEPYBF3I)](https://codecov.io/gh/aratare-tech/altio-core)
 
-Altio is an awesome Model-Driven code generator that doesn't suck. Period.
+A neat wrapper around [Eclipse Epsilon](https://www.eclipse.org/epsilon/) to add
+various goodness.
 
-For more details on Model-Driven Software Development (MDSD), check out [here](https://en.wikipedia.org/wiki/Model-driven_engineering).
+For more details on Model-Driven Software Development (MDSD), check
+out [here](https://en.wikipedia.org/wiki/Model-driven_engineering).
 
 # Installation
+
 TBC
 
 # What is it?
-> **_Altio_** comes from the Latin word **_altiorem_**, which means "higher".
 
-So why would there be another code generator?
+[Eclipse Epsilon](https://www.eclipse.org/epsilon/) is a code generator just
+like other various frameworks out
+there: [Selmer](https://github.com/yogthos/Selmer)
+, [StringTemplate](https://www.stringtemplate.org/)
+, [ThymeLeaf](https://www.thymeleaf.org/)
+, [Django](https://docs.djangoproject.com/en/dev/ref/templates/builtins/), etc.
 
-On one hand, we have well-known "ordinary" code generators like [Selmer](https://github.com/yogthos/Selmer) in Clojure land; [StringTemplate](https://www.stringtemplate.org/) or [ThymeLeaf](https://www.thymeleaf.org/) in Java land; [Django](https://docs.djangoproject.com/en/dev/ref/templates/builtins/) in Python; and so on. These generators are fast, well-tested, and will meet every requirement you may have for a code generator. However, they are not model-driven. There are no protected regions, nor anything remotely resemble such feature.
+What differentiates Epsilon is that it has a merge engine so that your
+hand-written code inside the generated files is kept throughout other generation
+cycles via **protected regions**.
 
-On the other hand, we have a few code generators that are model-driven, such as [JET](https://projects.eclipse.org/projects/modeling.m2t.jet), [Acceleo](https://www.eclipse.org/acceleo/) and [Epsilon](https://www.eclipse.org/epsilon/). However, they are plagued with major issues such as:
-- **Slow**. Due to AOT compilation, in larger projects, code generation can take up to 10~15 minutes. A single typo means another 15 minutes.
-- **Complicated**. All current model-driven generators exist within the [Ecore](https://wiki.eclipse.org/Ecore) ecosystem, which is overly complex and raises high learning curve for new learners.
-- **Inflexible**. The Ecore system is not only complicated, but also inflexible such that there is no easy way to tailor its functionality to your workflow. As Eclipse is always required for any kind of operations, CLI-only environments such as CI/CD is either not possible or extremely hard to achieve.
+Vanilla Epsilon, however, has much to be desired. It lacks various features that
+truly enhance the development process, which is something of a must in today's
+standard.
 
-This is where Altio comes in.
+Enters `epsilon-clj`.
 
-It is designed to be model-driven from the ground up, while offering to be a "good enough" code generator. As such, it aims to be:
-- **Fast:** As time is gold, the less time developers have to wait, the ~~less time to have sword fights~~ better.
-- **Light:** No flowers or unnecessary things. Altio needs to be lightweight so you can easily use it as a tool or a library.
-- **Informative:** With the REPL and tooling, you can get the right information about your model or templates.
-- **Easy to use:** No tied-in ecosystem, no steep learning curve, no complicated setup.
-
-Of course, on the other hand, Altio does NOT aim to be mutually exclusive with other generators. Rather, it provides an alternative way of applying MDSD to your project.
+Sprinkled with goodness, `epsilon-clj` aims to be the bridge between Epsilon and
+Clojure to bring MDSD closer to clojurists while making sure they still have
+their favourite workflow.
 
 # Features
-- [ ] EDN/JSON for models.
-- [ ] Simple Altio language for templating.
-    - [ ] Altio Templating Language
-    - [ ] Atlio Controlling Language
-    - [ ] Altio General Language
-    - [ ] Altio Migration Language
-- [ ] Hot-reload.
-- [ ] Auto warnings when removing protected regions
-- [ ] REPL for template inspection.
-- [ ] Can be used either as CLI or a library.
-- [ ] Plugin for IntelliJ.
+
+- [ ] XML model
+- [ ] EDN model
+- [ ] JSON model
+- [ ] Hot-reload on file changes
+- [ ] REPL
 
 ## Contributing
-Currently any features listed in this project are subjective to what I need on a daily basis. If there is a feature you want to add, feel free to let me know via issues, or if you feel generous, perhaps even a PR.
+
+Currently any features listed in this project are subjective to what I need on a
+daily basis. If there is a feature you want to add, feel free to let me know via
+issues, or if you feel generous, perhaps even a PR.
 
 ## [License](https://github.com/aratare-tech/altio/blob/master/LICENSE)
+
 Copyright 2020 Rex Truong
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
