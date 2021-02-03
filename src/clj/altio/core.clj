@@ -23,7 +23,9 @@
     ;; Use :update-fn to create non-idempotent options (:default is applied first)
     :update-fn inc]
    ["-D" "--[no-]daemon" "Detach the process" :default true]
-   ["-w" "--watch" "Watch the given template directory" :default false]
+   ["-w" "--watch" "Watch the given template directory"
+    :id :watch?
+    :default false]
    ["-h" "--help"]])
 
 (defn usage [options-summary]
