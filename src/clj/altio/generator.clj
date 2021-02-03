@@ -10,28 +10,37 @@
 (defn generate
   "Generate an EGX file with the given XML model. Return the root directory, the EGX file and the EGX module."
   [{:keys [root file]} models output-dir]
-  (let [template-factory (new CustomEglFileGeneratingTemplateFactory)]
-    (.setOutputRoot template-factory (fs/file output-dir))
-    (let [module (new EgxModule template-factory)]
-      (.parse module (fs/file root file))
-      (if (not (-> module .getParseProblems .isEmpty))
-        (do
-          (pprint (.getParseProblems module))
-          (throw (new RuntimeException "Parse problem found"))))
-      (doall
-        (for [model models]
-          (let [xml-model (new PlainXmlModel)]
-            (.setFile xml-model (fs/file model))
-            (.setName xml-model (fs/name model))
-            (.load xml-model)
-            (-> module .getContext .getModelRepository (.addModel xml-model)))))
-      (try
-        (.execute module)
-        (catch EolRuntimeException e
-          (pprint (.getMessage e))))
+  (let [output-dir       (fs/file output-dir)
+        file             (fs/file root file)
+        template-factory (doto (new CustomEglFileGeneratingTemplateFactory)
+                           (.setOutputRoot output-dir))
+        module           (doto (new EgxModule template-factory)
+                           (.parse file))]
+    ;; Check if there is no parsing errors.
+    (if (not (-> module .getParseProblems .isEmpty))
+      (do
+        (pprint (.getParseProblems module))
+        (throw (new RuntimeException "Parse problem found"))))
+    ;; Add all the models to the module.
+    (map
+      (fn [model]
+        (let [model-file (fs/file model)
+              model-name (fs/name model)
+              model      (doto (new PlainXmlModel)
+                           (.setFile model-file)
+                           (.setName model-name)
+                           (.load))]
+          (-> module .getContext .getModelRepository (.addModel model))))
+      models)
+    ;; Execute the module.
+    (try
+      (.execute module)
       {:root   root
        :file   file
-       :module module})))
+       :module module}
+      (catch EolRuntimeException e
+        (pprint (.getMessage e))
+        {:exception e}))))
 
 (defn watch
   [root-dir egx-files models output-dir]
@@ -62,8 +71,8 @@
         egx-files (fs/walk
                     (fn [root dirs files]
                       (-> files
-                          ((partial filter #(= (fs/extension %) ".egx")))
-                          ((partial mapv #(assoc {:root root} :file %)))))
+                          (->> (filter #(= (fs/extension %) ".egx")))
+                          (->> (mapv #(assoc {:root root} :file %)))))
                     dir)
         ;; Convert the 2D list into a 1D list for better consumption
         egx-files (reduce (fn [val new-val] (into val new-val)) [] egx-files)]
