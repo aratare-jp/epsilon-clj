@@ -29,8 +29,9 @@
                        :main          ^:skip-aot altio.core
                        :clean-targets ^{:protect false} [:target-path]}
 
-             :dev     {:plugins      [[lein-cloverage "1.2.1"]
-                                      [lein-virgil "0.1.9"]]
+             :test    {:plugins      [[lein-cloverage "1.2.1"]]
                        :dependencies [[pjstadig/humane-test-output "0.10.0"]]
                        :injections   [(require 'pjstadig.humane-test-output)
-                                      (pjstadig.humane-test-output/activate!)]}})
+                                      (pjstadig.humane-test-output/activate!)]}
+             :dev     [:test
+                       {:plugins [[lein-virgil "0.1.9"]]}]})

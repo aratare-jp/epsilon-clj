@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: lein deps
       - name: Run tests
-        run: lein cloverage --codecov
+        run: lein with-profile test cloverage --codecov
       - name: Upload code coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
