@@ -82,13 +82,13 @@ use `generate-all`:
   (handler))
 ```
 
-## Contributing
+# Contributing
 
 Currently, any features listed in this project are subjective to what I need on
 a daily basis. If there is a feature you want to add, feel free to let me know
 via issues, or if you feel generous, perhaps even a PR.
 
-## [License](https://github.com/aratare-tech/altio/blob/master/LICENSE)
+# [License](https://github.com/aratare-tech/altio/blob/master/LICENSE)
 
 Copyright 2020 Rex Truong
 
