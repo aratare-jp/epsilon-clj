@@ -9,3 +9,4 @@ target
 .nrepl-port
 *.iml
 .lein-failures
+test/resources/gen

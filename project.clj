@@ -12,7 +12,8 @@
                  [hawk "0.2.11"]
                  [mvxcvi/puget "1.3.1"]
                  [me.raynes/fs "1.4.6"]
-                 [swiss-arrows "1.0.0"]]
+                 [swiss-arrows "1.0.0"]
+                 [com.taoensso/timbre "5.1.2"]]
 
   :min-lein-version "2.0.0"
 
@@ -29,9 +30,10 @@
                        :main          ^:skip-aot altio.core
                        :clean-targets ^{:protect false} [:target-path]}
 
-             :test    {:plugins      [[lein-cloverage "1.2.1"]]
-                       :dependencies [[pjstadig/humane-test-output "0.10.0"]]
-                       :injections   [(require 'pjstadig.humane-test-output)
-                                      (pjstadig.humane-test-output/activate!)]}
+             :test    {:plugins        [[lein-cloverage "1.2.1"]]
+                       :resource-paths ["test/resources"]
+                       :dependencies   [[pjstadig/humane-test-output "0.10.0"]]
+                       :injections     [(require 'pjstadig.humane-test-output)
+                                        (pjstadig.humane-test-output/activate!)]}
              :dev     [:test
                        {:plugins [[lein-virgil "0.1.9"]]}]})

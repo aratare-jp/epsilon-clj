@@ -1,90 +1,131 @@
 (ns altio.generator
   (:require [puget.printer :refer [pprint]]
             [me.raynes.fs :as fs]
-            [hawk.core :as hawk])
+            [hawk.core :as hawk]
+            [taoensso.timbre :as log]
+            [altio.utility :refer :all])
   (:import [org.eclipse.epsilon.egl EgxModule]
            [org.eclipse.epsilon.emc.plainxml PlainXmlModel]
            [org.eclipse.epsilon.eol.exceptions EolRuntimeException]
-           [altio CustomEglFileGeneratingTemplateFactory]))
+           [altio CustomEglFileGeneratingTemplateFactory]
+           [clojure.lang ExceptionInfo]
+           [java.io File]))
+
+(defn model-path->xml [model-path]
+  "Load the model at the path and convert it to PlainXmlModel."
+  (doto (new PlainXmlModel)
+    (.setFile (fs/file model-path))
+    (.setName (fs/name model-path))
+    (.load)))
+
+(defn ->template-factory
+  "Return a new EglFileGeneratingTemplateFactory that outputs to the given path."
+  [^String output-dir]
+  (doto (new CustomEglFileGeneratingTemplateFactory) (.setOutputRoot output-dir)))
+
+(defn ->egx-module
+  "Take a file path and parses that into an EGX module, which will then be set with the output path.
+
+  Returns a map with keys of :module and :problems? to indicate if there has been parse problems."
+  [^String egx-path
+   ^String output-dir]
+  (let [template-factory (->template-factory output-dir)
+        ^File egx-file   (fs/file egx-path)
+        egx-module       (doto (new EgxModule template-factory) (.parse egx-file))
+        parse-problems   (.getParseProblems egx-module)]
+    {:module    egx-module
+     :problems? (if (.isEmpty parse-problems)
+                  false
+                  parse-problems)}))
+
+(defn path->egx-files
+  "Return all egx-files from within the given directory."
+  ([path]
+   (path->egx-files path true))
+  ([path recursive?]
+   (if recursive?
+     (let [egx-files (fs/walk
+                       (fn [root _ files]
+                         (->> files
+                              (filter #(= (fs/extension %) ".egx"))
+                              (mapv #(.getAbsolutePath (fs/file root %)))))
+                       path)]
+       (reduce (fn [val new-val] (into val new-val)) [] egx-files))
+     (-> path
+         (fs/list-dir)
+         (filter #(and (fs/file? %) (= (fs/extension %) ".egx")))))))
 
 (defn generate
-  "Generate an EGX file with the given XML model. Return the root directory, the EGX file and the EGX module."
-  ([{:keys [root file]} models output-dir]
-   (let [output-dir       (fs/file output-dir)
-         file             (fs/file root file)
-         template-factory (doto (new CustomEglFileGeneratingTemplateFactory)
-                            (.setOutputRoot output-dir))
-         module           (doto (new EgxModule template-factory)
-                            (.parse file))]
-     ;; Check if there is no parsing errors.
-     (if (not (-> module .getParseProblems .isEmpty))
+  "Generate an EGX file with the given XML model. Return the EGX path or exception if exists."
+  ([egx-path model-paths output-dir]
+   (let [egx-module (->egx-module egx-path output-dir)]
+     (if-let [problems (:problems egx-module)]
        (do
-         (pprint (.getParseProblems module))
-         (throw (new RuntimeException "Parse problem found"))))
-     ;; Add all the models to the module.
-     (map
-       (fn [model]
-         (let [model-file (fs/file model)
-               model-name (fs/name model)
-               model      (doto (new PlainXmlModel)
-                            (.setFile model-file)
-                            (.setName model-name)
-                            (.load))]
-           (-> module .getContext .getModelRepository (.addModel model))))
-       models)
-     ;; Execute the module.
-     (try
-       (.execute module)
-       {:root   root
-        :file   file
-        :module module}
-       (catch EolRuntimeException e
-         (pprint (.getMessage e))
-         {:exception e})))))
+         (throw (ex-info "Parse problem found" {:problems problems})))
+       (do
+         (let [egx-module (:module egx-module)
+               xml-models (map model-path->xml model-paths)]
+           (doall (map #(-> egx-module .getContext .getModelRepository (.addModel %)) xml-models))
+           (try
+             (log/info "Executing" egx-path)
+             (.execute egx-module)
+             {:egx-path egx-path}
+             (catch EolRuntimeException e
+               (throw (ex-info "EOL exception when executed" {:exception e}))))))))))
+
+(defn create-modify-handler
+  "How to handle on creation and modification of a file within the watched directory."
+  [file-path model-paths output-dir]
+  (cond
+    ;; If it's an EGX file, generate straight away.
+    (egx? file-path)
+    (try
+      (generate file-path model-paths output-dir)
+      (catch ExceptionInfo e
+        (log/error "Exception found when trying to hot-reload" file-path)
+        (.printStackTrace e)))
+
+    ;; If it's an EGL file, find the corresponding EGX file and generate it.
+    ;; If no EGX file was found, do nothing.
+    (egl? file-path)
+    (try
+      (let [egx-file-path (replace-ext file-path "egx")]
+        (if (fs/exists? egx-file-path)
+          (try
+            (generate egx-file-path model-paths output-dir)
+            (catch ExceptionInfo e
+              (log/error "Exception found when trying to hot-reload" file-path)
+              (.printStackTrace e))))))
+
+    ;; Nothing yet when EOL is created/modified. One thing we can do is to figure out
+    ;; which modules depend on this EOL, then trigger a hot reload on the leaf modules
+    ;; since doing so will trigger a down-cascade hot-reload on all relevant dependent
+    ;; modules
+    (eol? file-path)
+    (log/warn "No EOL support yet.")))
 
 (defn watch
-  [root-dir egx-files models output-dir]
+  [root-dir model-paths output-dir]
   (hawk/watch! [{:paths   [root-dir]
-                 :filter  (fn [ctx {:keys [file kind]}]
+                 :filter  (fn [_ {:keys [file]}]
                             (and
-                              (= :modify kind)
                               (.isFile file)
-                              (= ".egx" (fs/extension (.toPath file)))))
+                              (egx? file)
+                              (egl? file)))
                  :handler (fn [ctx {:keys [file kind]}]
                             (case kind
-                              :create
-                              (let [root (-> file .getParentFile .getAbsoluteFile)
-                                    file (.getName file)]
-                                (conj egx-files (generate {:root root :file file} models output-dir)))
-                              :modify
-                              (do
-                                (let [root (-> file .getParentFile .getAbsoluteFile)
-                                      file (.getName file)]
-                                  (generate {:root root :file file} models output-dir)))
+                              :create (create-modify-handler file model-paths output-dir)
+                              :modify (create-modify-handler file model-paths output-dir)
                               :delete (pprint (str "Delete file " file)))
                             ctx)}]))
 
 (defn generate-all
-  "Goes through the provided directory and generate everything."
-  [{:keys [dir watch? models output-dir]}]
-  (let [;; Walk the given dir to get all the files in form of a 2D list
-        egx-files (fs/walk
-                    (fn [root dirs files]
-                      (-> files
-                          (->> (filter #(= (fs/extension %) ".egx")))
-                          (->> (mapv #(assoc {:root root} :file %)))))
-                    dir)
-        ;; Convert the 2D list into a 1D list for better consumption
-        egx-files (reduce (fn [val new-val] (into val new-val)) [] egx-files)]
-    (map #(generate % models output-dir) egx-files)
-    (if watch?
-      (let [handler (watch dir egx-files models output-dir)]
-        (fn [] (hawk/stop! handler))))))
+  "Go through the provided template directory and generate everything.
 
-(comment
-  (generate "C:\\Users\\aratare\\projects\\altio\\resources\\templates" "main.egx" ["C:\\Users\\aratare\\projects\\altio\\resources\\templates\\library.xml"])
-  (def watcher (generate-all {:dir        "resources/templates"
-                              :models     ["C:\\Users\\aratare\\projects\\altio\\resources\\templates\\library.xml"]
-                              :output-dir "resources/new-gen"
-                              :watch?     true}))
-  (hawk/stop! watcher))
+  If watch? is true, return the watcher handler to be called to stop the watcher."
+  [template-dir model-paths output-dir watch?]
+  (if watch?
+    (let [handler (watch template-dir model-paths output-dir)]
+      (fn [] (hawk/stop! handler)))
+    (let [egx-files (path->egx-files template-dir)]
+      (doall (pmap #(generate % model-paths output-dir) egx-files)))))

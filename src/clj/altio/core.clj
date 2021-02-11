@@ -10,7 +10,7 @@
   [["-d" "--dir DIR" "Template directory. Can be relative or absolute."
     :validate [#(fs/exists? %) "Directory must be valid."]]
    ["-m" "--model MODEL" "Path to XML model to use. Can be relative or absolute."
-    :id :models
+    :id :model-paths
     :default []
     :validate [#(fs/exists? %) "Model must be valid."]
     :assoc-fn (fn [opts opt v] (update opts opt conj v))]
