@@ -1,4 +1,6 @@
-# Welcome to MkDocs
+<p align="center"><img src="images/logo/logo.png?raw=true" alt="epsilon logo"></p>
+
+# Welcome to `epsilon-clj`
 
 For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 
