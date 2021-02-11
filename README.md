@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/logo/logo.png?raw=true" alt="epsilon logo"></p>
+
 # `epsilon-clj`
 
 ![Clojure CI](https://github.com/aratare-jp/epsilon-clj/workflows/Clojure%20CI/badge.svg?branch=master)
