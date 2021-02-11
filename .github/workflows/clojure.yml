@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+        run: pip install mkdocs-material
       - name: Install dependencies
         run: lein deps
       - name: Run tests
@@ -24,3 +28,5 @@ jobs:
           name: altio-unit
           fail_ci_if_error: true
           verbose: true
+      - name: Upload MKDocs
+        run: mkdocs gh-deploy --force
