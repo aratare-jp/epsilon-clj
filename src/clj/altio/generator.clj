@@ -20,16 +20,15 @@
 
 (defn ->template-factory
   "Return a new EglFileGeneratingTemplateFactory that outputs to the given path."
-  [^String output-dir]
-  (doto (new CustomEglFileGeneratingTemplateFactory) (.setOutputRoot output-dir)))
+  [^String output-dir-path]
+  (doto (new CustomEglFileGeneratingTemplateFactory) (.setOutputRoot output-dir-path)))
 
 (defn ->egx-module
   "Take a file path and parses that into an EGX module, which will then be set with the output path.
 
   Returns a map with keys of :module and :problems? to indicate if there has been parse problems."
-  [^String egx-path
-   ^String output-dir]
-  (let [template-factory (->template-factory output-dir)
+  [egx-path output-dir-path]
+  (let [template-factory (->template-factory output-dir-path)
         ^File egx-file   (fs/file egx-path)
         egx-module       (doto (new EgxModule template-factory) (.parse egx-file))
         parse-problems   (.getParseProblems egx-module)]
@@ -50,6 +49,7 @@
                               (filter #(= (fs/extension %) ".egx"))
                               (mapv #(.getAbsolutePath (fs/file root %)))))
                        path)]
+       egx-files
        (reduce (fn [val new-val] (into val new-val)) [] egx-files))
      (-> path
          (fs/list-dir)
@@ -57,30 +57,28 @@
 
 (defn generate
   "Generate an EGX file with the given XML model. Return the EGX path or exception if exists."
-  ([egx-path model-paths output-dir]
-   (let [egx-module (->egx-module egx-path output-dir)]
+  ([egx-path model-paths output-dir-path]
+   (let [egx-module (->egx-module egx-path output-dir-path)]
      (if-let [problems (:problems egx-module)]
-       (do
-         (throw (ex-info "Parse problem found" {:problems problems})))
-       (do
-         (let [egx-module (:module egx-module)
-               xml-models (map model-path->xml model-paths)]
-           (doall (map #(-> egx-module .getContext .getModelRepository (.addModel %)) xml-models))
-           (try
-             (log/info "Executing" egx-path)
-             (.execute egx-module)
-             {:egx-path egx-path}
-             (catch EolRuntimeException e
-               (throw (ex-info "EOL exception when executed" {:exception e}))))))))))
+       (throw (ex-info "Parse problem found" {:problems problems}))
+       (let [egx-module (:module egx-module)
+             xml-models (map model-path->xml model-paths)]
+         (doall (map #(-> egx-module .getContext .getModelRepository (.addModel %)) xml-models))
+         (try
+           (log/info "Executing" egx-path)
+           (.execute egx-module)
+           {:egx-path egx-path}
+           (catch EolRuntimeException e
+             (throw (ex-info "EOL exception when executed" {:exception e})))))))))
 
 (defn create-modify-handler
   "How to handle on creation and modification of a file within the watched directory."
-  [file-path model-paths output-dir]
+  [file-path model-paths output-dir-path]
   (cond
     ;; If it's an EGX file, generate straight away.
     (egx? file-path)
     (try
-      (generate file-path model-paths output-dir)
+      (generate file-path model-paths output-dir-path)
       (catch ExceptionInfo e
         (log/error "Exception found when trying to hot-reload" file-path)
         (.printStackTrace e)))
@@ -92,7 +90,7 @@
       (let [egx-file-path (replace-ext file-path "egx")]
         (if (fs/exists? egx-file-path)
           (try
-            (generate egx-file-path model-paths output-dir)
+            (generate egx-file-path model-paths output-dir-path)
             (catch ExceptionInfo e
               (log/error "Exception found when trying to hot-reload" file-path)
               (.printStackTrace e))))))
@@ -100,12 +98,12 @@
     ;; Nothing yet when EOL is created/modified. One thing we can do is to figure out
     ;; which modules depend on this EOL, then trigger a hot reload on the leaf modules
     ;; since doing so will trigger a down-cascade hot-reload on all relevant dependent
-    ;; modules
+    ;; modules. But meh maybe later.
     (eol? file-path)
     (log/warn "No EOL support yet.")))
 
 (defn watch
-  [root-dir model-paths output-dir]
+  [root-dir model-paths output-dir-path]
   (hawk/watch! [{:paths   [root-dir]
                  :filter  (fn [_ {:keys [file]}]
                             (and
@@ -114,8 +112,8 @@
                               (egl? file)))
                  :handler (fn [ctx {:keys [file kind]}]
                             (case kind
-                              :create (create-modify-handler file model-paths output-dir)
-                              :modify (create-modify-handler file model-paths output-dir)
+                              :create (create-modify-handler file model-paths output-dir-path)
+                              :modify (create-modify-handler file model-paths output-dir-path)
                               :delete (pprint (str "Delete file " file)))
                             ctx)}]))
 
@@ -123,9 +121,10 @@
   "Go through the provided template directory and generate everything.
 
   If watch? is true, return the watcher handler to be called to stop the watcher."
-  [template-dir model-paths output-dir watch?]
+  [template-dir model-paths output-dir-path watch?]
+  (let [egx-files (path->egx-files template-dir)]
+    ;; Need to parallelise this somehow.
+    (doall (map #(generate % model-paths output-dir-path) egx-files)))
   (if watch?
-    (let [handler (watch template-dir model-paths output-dir)]
-      (fn [] (hawk/stop! handler)))
-    (let [egx-files (path->egx-files template-dir)]
-      (doall (pmap #(generate % model-paths output-dir) egx-files)))))
+    (let [handler (watch template-dir model-paths output-dir-path)]
+      (fn [] (hawk/stop! handler)))))

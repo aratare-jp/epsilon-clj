@@ -10,7 +10,7 @@ public class CustomEglFileGeneratingTemplateFactory extends EglFileGeneratingTem
 	public void setOutputRoot(String path) throws EglRuntimeException {
 		File outputRoot = new File(path);
 		if (!outputRoot.exists()) {
-			if (!outputRoot.mkdir()) {
+			if (!outputRoot.mkdirs()) {
 				throw new EglRuntimeException(new EolRuntimeException("Unable to create output directory"));
 			}
 		} else if (!outputRoot.isDirectory()) {

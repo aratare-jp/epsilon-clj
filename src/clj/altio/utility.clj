@@ -35,3 +35,6 @@
     (if (= \. (first ext))
       (str no-ext-file ext)
       (str no-ext-file "." ext))))
+
+(comment
+  (= "test.egx" (replace-ext "test.egl" "egx")))

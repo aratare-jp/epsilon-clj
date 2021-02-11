@@ -19,7 +19,6 @@
 
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
-  :test-paths ["test/clj"]
   :resource-paths ["resources"]
 
   :profiles {:uberjar {:omit-source   true
@@ -29,11 +28,9 @@
                        :target-path   "target/%s/"
                        :main          ^:skip-aot altio.core
                        :clean-targets ^{:protect false} [:target-path]}
-
-             :test    {:plugins        [[lein-cloverage "1.2.1"]]
-                       :resource-paths ["test/resources"]
-                       :dependencies   [[pjstadig/humane-test-output "0.10.0"]]
-                       :injections     [(require 'pjstadig.humane-test-output)
-                                        (pjstadig.humane-test-output/activate!)]}
+             :test    {:plugins        [[lein-cloverage "1.2.1"]
+                                        [lein-eftest "0.5.9"]]
+                       :test-paths     ["test/clj"]
+                       :resource-paths ["test/resources"]}
              :dev     [:test
                        {:plugins [[lein-virgil "0.1.9"]]}]})
