@@ -12,7 +12,6 @@ For more details on Model-Driven Software Development (MDSD), check
 out [here](https://en.wikipedia.org/wiki/Model-driven_engineering).
 
 # Installation
-d
 TBC
 
 # What is it?
@@ -46,9 +45,7 @@ making sure they still have their favourite workflow.
 - [ ] Hot-reload on file changes
 - [ ] REPL
 
-# Documentation
-
-For Epsilon's specifics, check out [here](https://www.eclipse.org/epsilon/).
+# Quick start
 
 ## CLI
 
@@ -83,6 +80,12 @@ use `generate-all`:
 (let [handler (gen/generate-all "templates" true ["model.xml"] "gen")]
   (handler))
 ```
+
+# Documentation
+
+Check out the full documentation for `epsilon-clj` [here](https://aratare-jp.github.io/epsilon-clj).
+
+For Epsilon's specifics, check it out [here](https://www.eclipse.org/epsilon/).
 
 # Contributing
 
