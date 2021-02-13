@@ -29,8 +29,9 @@
   If the extension is not prefixed with a dot, add one automatically.
 
   Returns the new path with no side-effect (no file created/modified/etc.)"
-  [^String file-path ^String ext]
-  (let [dot-index   (.lastIndexOf file-path ".")
+  [target ^String ext]
+  (let [file-path   (if (string? target) target (.getAbsolutePath target))
+        dot-index   (.lastIndexOf file-path ".")
         no-ext-file (subs file-path 0 dot-index)]
     (if (= \. (first ext))
       (str no-ext-file ext)

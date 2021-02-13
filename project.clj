@@ -14,7 +14,6 @@
                  [me.raynes/fs "1.4.6"]
                  [swiss-arrows "1.0.0"]
                  [com.taoensso/timbre "5.1.2"]]
-
   :min-lein-version "2.0.0"
 
   :source-paths ["src/clj"]
@@ -31,6 +30,7 @@
              :test    {:plugins        [[lein-cloverage "1.2.1"]
                                         [lein-eftest "0.5.9"]]
                        :test-paths     ["test/clj"]
+                       :dependencies   [[eftest "0.5.9"]]
                        :resource-paths ["test/resources"]}
              :dev     [:test
                        {:plugins [[lein-virgil "0.1.9"]]}]})

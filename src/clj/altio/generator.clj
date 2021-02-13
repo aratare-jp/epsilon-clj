@@ -9,7 +9,8 @@
            [org.eclipse.epsilon.eol.exceptions EolRuntimeException]
            [altio CustomEglFileGeneratingTemplateFactory]
            [clojure.lang ExceptionInfo]
-           [java.io File]))
+           [java.io File]
+           [java.nio.file Files]))
 
 (defn model-path->xml [model-path]
   "Load the model at the path and convert it to PlainXmlModel."
@@ -73,49 +74,54 @@
 
 (defn create-modify-handler
   "How to handle on creation and modification of a file within the watched directory."
-  [file-path model-paths output-dir-path]
+  [file model-paths output-dir-path]
+  (log/info "File" file "changed. Regenerating begins.")
   (cond
     ;; If it's an EGX file, generate straight away.
-    (egx? file-path)
+    (egx? file)
     (try
-      (generate file-path model-paths output-dir-path)
+      (generate file model-paths output-dir-path)
       (catch ExceptionInfo e
-        (log/error "Exception found when trying to hot-reload" file-path)
+        (log/error "Exception found when trying to hot-reload" file)
         (.printStackTrace e)))
 
     ;; If it's an EGL file, find the corresponding EGX file and generate it.
     ;; If no EGX file was found, do nothing.
-    (egl? file-path)
+    (egl? file)
     (try
-      (let [egx-file-path (replace-ext file-path "egx")]
+      (let [egx-file-path (replace-ext file "egx")]
         (if (fs/exists? egx-file-path)
           (try
             (generate egx-file-path model-paths output-dir-path)
             (catch ExceptionInfo e
-              (log/error "Exception found when trying to hot-reload" file-path)
+              (log/error "Exception found when trying to hot-reload" file)
               (.printStackTrace e))))))
 
     ;; Nothing yet when EOL is created/modified. One thing we can do is to figure out
     ;; which modules depend on this EOL, then trigger a hot reload on the leaf modules
     ;; since doing so will trigger a down-cascade hot-reload on all relevant dependent
     ;; modules. But meh maybe later.
-    (eol? file-path)
+    (eol? file)
     (log/warn "No EOL support yet.")))
 
 (defn watch
-  [root-dir model-paths output-dir-path]
-  (hawk/watch! [{:paths   [root-dir]
-                 :filter  (fn [_ {:keys [file]}]
-                            (and
-                              (.isFile file)
-                              (egx? file)
-                              (egl? file)))
-                 :handler (fn [ctx {:keys [file kind]}]
-                            (case kind
-                              :create (create-modify-handler file model-paths output-dir-path)
-                              :modify (create-modify-handler file model-paths output-dir-path)
-                              :delete (pprint (str "Delete file " file)))
-                            ctx)}]))
+  "Watch the given template directory and regenerate if file change is detected.
+
+  Support file creation, deletion and modification."
+  [template-dir model-paths output-dir-path]
+  (let [handler (hawk/watch! [{:paths   [template-dir]
+                               :filter  (fn [_ {:keys [file]}]
+                                          (and
+                                            (.isFile file)
+                                            (or (egx? file)
+                                                (egl? file))))
+                               :handler (fn [ctx {:keys [file kind] :as env}]
+                                          (case kind
+                                            :create (create-modify-handler file model-paths output-dir-path)
+                                            :modify (create-modify-handler file model-paths output-dir-path)
+                                            :delete (pprint (str "Delete file " file)))
+                                          ctx)}])]
+    (fn [] (hawk/stop! handler))))
 
 (defn generate-all
   "Go through the provided template directory and generate everything.
@@ -126,5 +132,5 @@
     ;; Need to parallelise this somehow.
     (doall (map #(generate % model-paths output-dir-path) egx-files)))
   (if watch?
-    (let [handler (watch template-dir model-paths output-dir-path)]
-      (fn [] (hawk/stop! handler)))))
+    (watch template-dir model-paths output-dir-path)))
+
