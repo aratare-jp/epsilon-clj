@@ -1,4 +1,4 @@
-(defproject epsilon "1.0.0"
+(defproject epsilon "1.0.0-alpha"
   :description "Model-driven code generator"
   :url "http://github.com/aratare-jp/epsilon-clj"
   :dependencies [[mount "0.1.16"]
@@ -22,7 +22,8 @@
                        :aot           :all
                        :target-path   "target/%s/"
                        :main          epsilon.core
-                       :clean-targets ^{:protect false} [:target-path]}
+                       :clean-targets ^{:protect false} [:target-path]
+                       :uberjar-name "epsilon-clj-standalone.jar"}
              :test    {:plugins        [[lein-cloverage "1.2.1"]
                                         [lein-eftest "0.5.9"]]
 

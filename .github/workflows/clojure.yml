@@ -14,17 +14,23 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - uses: actions/checkout@v2
+
       - uses: DeLaGuardo/setup-clojure@master
         with:
           lein: 2.9.5
+
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
+
       - run: pip install mkdocs-material
+
       - name: Install dependencies
         run: lein deps
+
       - name: Run tests
         run: lein with-profile test cloverage --runner :eftest --codecov
+
       - if: matrix.os == 'ubuntu-latest'
         name: Upload code coverage to Codecov
         uses: codecov/codecov-action@v1
@@ -35,6 +41,34 @@ jobs:
           name: epsilon-clj-unit
           fail_ci_if_error: true
           verbose: true
+
       - if: matrix.os == 'ubuntu-latest'
         name: Upload MKDocs
         run: mkdocs gh-deploy --force
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Build Uberjar
+        runs: lein with-profile uberjar uberjar
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/uberjar/epsilon-clj-standalone.jar
+          asset_name: epsilon-clj-standalone.jar

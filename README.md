@@ -11,7 +11,12 @@ various goodness.
 For more details on Model-Driven Software Development (MDSD), check
 out [here](https://en.wikipedia.org/wiki/Model-driven_engineering).
 
+# Status
+
+`ALPHA`
+
 # Installation
+
 TBC
 
 # What is it?
@@ -71,19 +76,25 @@ To use `epsilon-clj` in code, simply require the namespace and
 use `generate-all`:
 
 ```clojure
-(require '[epsilon-clj.generator :as gen])
+(require '[epsilon.generator :as gen])
 
 ;; Takes in the template directory, the watch mode flag, the models and the output directory.
-(gen/generate-all "templates" false ["model.xml"] "gen")
+(gen/generate-all "templates" ["model.xml"] "gen" false)
 
 ;; Using watch mode will return a watcher handler, which can be used to stop the watcher.
-(let [handler (gen/generate-all "templates" true ["model.xml"] "gen")]
+;; Note that this function will first generate all files.
+(let [handler (gen/generate-all "templates" ["model.xml"] "gen" true)]
+  (handler))
+
+;; If you only want to watch a directory, use watch instead:
+(let [handler (gen/watch "templates" ["model.xml"] "gen")]
   (handler))
 ```
 
 # Documentation
 
-Check out the full documentation for `epsilon-clj` [here](https://aratare-jp.github.io/epsilon-clj).
+Check out the full documentation
+for `epsilon-clj` [here](https://aratare-jp.github.io/epsilon-clj).
 
 For Epsilon's specifics, check it out [here](https://www.eclipse.org/epsilon/).
 
