@@ -14,6 +14,9 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - uses: actions/checkout@v2
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          lein: 2.9.5
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
