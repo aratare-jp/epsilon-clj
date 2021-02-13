@@ -8,7 +8,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -19,7 +22,8 @@ jobs:
         run: lein deps
       - name: Run tests
         run: lein with-profile test cloverage --runner :eftest --codecov
-      - name: Upload code coverage to Codecov
+      - if: matrix.os == 'ubuntu-latest'
+        name: Upload code coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -28,5 +32,6 @@ jobs:
           name: altio-unit
           fail_ci_if_error: true
           verbose: true
-      - name: Upload MKDocs
+      - if: matrix.os == 'ubuntu-latest'
+        name: Upload MKDocs
         run: mkdocs gh-deploy --force
