@@ -1,4 +1,4 @@
-(ns altio.core-test
+(ns epsilon.core-test
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer [pprint]]))
 

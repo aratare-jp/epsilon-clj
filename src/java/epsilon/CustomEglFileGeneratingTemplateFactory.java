@@ -1,4 +1,4 @@
-package altio;
+package epsilon;
 
 import org.eclipse.epsilon.egl.EglFileGeneratingTemplateFactory;
 import org.eclipse.epsilon.egl.exceptions.EglRuntimeException;
@@ -10,9 +10,7 @@ public class CustomEglFileGeneratingTemplateFactory extends EglFileGeneratingTem
 	public void setOutputRoot(String path) throws EglRuntimeException {
 		File outputRoot = new File(path);
 		if (!outputRoot.exists()) {
-			if (!outputRoot.mkdirs()) {
-				throw new EglRuntimeException(new EolRuntimeException("Unable to create output directory"));
-			}
+			outputRoot.mkdirs();
 		} else if (!outputRoot.isDirectory()) {
 			throw new EglRuntimeException(new EolRuntimeException("Output path must be a directory"));
 		}

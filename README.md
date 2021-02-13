@@ -71,7 +71,7 @@ To use `epsilon-clj` in code, simply require the namespace and
 use `generate-all`:
 
 ```clojure
-(require '[altio.generator :as gen])
+(require '[epsilon-clj.generator :as gen])
 
 ;; Takes in the template directory, the watch mode flag, the models and the output directory.
 (gen/generate-all "templates" false ["model.xml"] "gen")
@@ -93,7 +93,7 @@ Currently, any features listed in this project are subjective to what I need on
 a daily basis. If there is a feature you want to add, feel free to let me know
 via issues, or if you feel generous, perhaps even a PR.
 
-# [License](https://github.com/aratare-tech/altio/blob/master/LICENSE)
+# [License](https://github.com/aratare-tech/epsilon-clj/blob/master/LICENSE)
 
 Copyright 2020 Rex Truong
 

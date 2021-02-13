@@ -1,9 +1,9 @@
-(ns altio.core
+(ns epsilon.core
   (:gen-class)
   (:require [puget.printer :refer [pprint]]
             [clojure.tools.cli :as cli]
             [clojure.string :as string]
-            [altio.generator :refer [generate-all]]
+            [epsilon.generator :refer [generate-all]]
             [me.raynes.fs :as fs]))
 
 (def cli-options

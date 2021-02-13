@@ -1,27 +1,32 @@
-(ns altio.utility
-  (:require [me.raynes.fs :as fs]
-            [taoensso.timbre :as log]))
+(ns epsilon.utility
+  (:require [me.raynes.fs :as fs]))
+
+(defn is-ext?
+  "Check if a given path or file has the given extension."
+  [path ext]
+  (if (fs/file? path)
+    (= ext (fs/extension (.toPath path)))
+    (= ext (fs/extension path))))
 
 (defn egx?
   "Check if a given path or file is an EGX file."
   [path]
-  (if (fs/file? path)
-    (= ".egx" (fs/extension (.toPath path)))
-    (= ".egx" (fs/extension path))))
+  (is-ext? path ".egx"))
 
 (defn egl?
   "Check if a given path or file is an EGL file."
   [path]
-  (if (fs/file? path)
-    (= ".egl" (fs/extension (.toPath path)))
-    (= ".egl" (fs/extension path))))
+  (is-ext? path ".egl"))
 
 (defn eol?
   "Check if a given path or file is an EOL file."
   [path]
-  (if (fs/file? path)
-    (= ".eol" (fs/extension (.toPath path)))
-    (= ".eol" (fs/extension path))))
+  (is-ext? path ".eol"))
+
+(defn evl?
+  "Check if a given path or file is an EVL file."
+  [path]
+  (is-ext? path ".evl"))
 
 (defn replace-ext
   "Replace the given file's extension with the given extension.
@@ -36,6 +41,3 @@
     (if (= \. (first ext))
       (str no-ext-file ext)
       (str no-ext-file "." ext))))
-
-(comment
-  (= "test.egx" (replace-ext "test.egl" "egx")))

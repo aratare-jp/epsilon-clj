@@ -32,7 +32,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./target/coverage/codecov.json
           flags: unittests
-          name: altio-unit
+          name: epsilon-clj-unit
           fail_ci_if_error: true
           verbose: true
       - if: matrix.os == 'ubuntu-latest'

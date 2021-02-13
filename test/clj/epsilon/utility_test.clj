@@ -1,6 +1,6 @@
-(ns altio.utility-test
+(ns epsilon.utility-test
   (:require [clojure.test :refer :all]
-            [altio.utility :refer :all]))
+            [epsilon.utility :refer :all]))
 
 (deftest replace-ext-test
   (is (= "test.egx" (replace-ext "test.egl" "egx")))
