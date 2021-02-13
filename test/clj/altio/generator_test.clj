@@ -32,6 +32,7 @@
 
 (deftest generate-test
   (generate template-egx-file model-paths actual-generate-test-dir-path)
+  (Thread/sleep 500)
   (let [expected-gen-files (-> expected-generate-test-dir-path fs/list-dir sort vec)
         actual-gen-files   (-> actual-generate-test-dir-path fs/list-dir sort vec)]
     (is (= (count expected-gen-files) (count actual-gen-files)))
@@ -44,14 +45,15 @@
 
 (deftest generate-all-test
   (generate-all template-dir model-paths actual-generate-all-test-dir-path false)
+  (Thread/sleep 500)
   (let [walker             (fn [root dirs files]
                              {:dirs  dirs
                               :files (map (fn [file]
                                             {:name    file
                                              :content (slurp (fs/file root file))})
                                           files)})
-        expected-gen-files (->> expected-generate-all-test-dir-path (fs/walk walker))
-        actual-gen-files   (->> actual-generate-all-test-dir-path (fs/walk walker))]
+        expected-gen-files (->> expected-generate-all-test-dir-path (fs/walk walker) doall)
+        actual-gen-files   (->> actual-generate-all-test-dir-path (fs/walk walker) doall)]
     (doall (for [i-dir (range (count expected-gen-files))]
              (let [expected-gen-dirs (-> expected-gen-files (nth i-dir) :dirs)
                    actual-gen-dirs   (-> actual-gen-files (nth i-dir) :dirs)]
