@@ -44,7 +44,7 @@ jobs:
 
       - if: matrix.os == 'ubuntu-latest'
         name: Upload MKDocs
-        run: mkdocs gh-deploy --force
+        runs: mkdocs gh-deploy --force
 
       - if: matrix.os == 'ubuntu-latest'
         name: Build Uberjar
