@@ -46,6 +46,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - run: pip install mkdocs-material
+
       - name: Upload MKDocs
         run: mkdocs gh-deploy --force
 
