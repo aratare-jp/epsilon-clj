@@ -20,15 +20,19 @@
 (def expected-watch-test-dir-path "test/resources/expected/watch_test")
 (def actual-watch-test-dir-path "test/resources/actual/watch_test")
 
-(defn fixture [f]
-  (fs/delete-dir actual-output-dir-path)
+(defn each-fixture [f]
   ;; Used to cache a template content so we can modify it freely within the test.
   (let [original-content (slurp template-egl-file)]
     (f)
-    (spit template-egl-file original-content))
+    (spit template-egl-file original-content)))
+
+(defn once-fixture [f]
+  (fs/delete-dir actual-output-dir-path)
+  (f)
   (fs/delete-dir actual-output-dir-path))
 
-(use-fixtures :each fixture)
+(use-fixtures :each each-fixture)
+(use-fixtures :once once-fixture)
 
 (deftest generate-test
   (generate template-egx-file model-paths actual-generate-test-dir-path)
@@ -52,11 +56,9 @@
                                             {:name    file
                                              :content (slurp (fs/file root file))})
                                           files)})
-        expected-gen-files (->> expected-generate-all-test-dir-path (fs/walk walker))
-        actual-gen-files   (->> actual-generate-all-test-dir-path (fs/walk walker))]
+        expected-gen-files (->> expected-generate-all-test-dir-path (fs/walk walker) vec)
+        actual-gen-files   (->> actual-generate-all-test-dir-path (fs/walk walker) vec)]
     (is (= (count expected-gen-files) (count actual-gen-files)))
-    (pprint expected-gen-files)
-    (pprint actual-gen-files)
     (doall (for [i-dir (range (count expected-gen-files))]
              (let [expected-gen-dirs (-> expected-gen-files (nth i-dir) :dirs)
                    actual-gen-dirs   (-> actual-gen-files (nth i-dir) :dirs)]
@@ -64,8 +66,8 @@
                (doall (for [i-file (range (count (nth expected-gen-files i-dir)))]
                         (let [expected-gen-file (-> expected-gen-files (nth i-dir) :files (->> (sort-by :name)) (nth i-file))
                               actual-gen-file   (-> actual-gen-files (nth i-dir) :files (->> (sort-by :name)) (nth i-file))]
-                          (is (= (:name expected-gen-file) (:name actual-gen-file)))
-                          (is (= (:content expected-gen-file) (:content actual-gen-file)))))))))))
+                          (is (.equals (:name expected-gen-file) (:name actual-gen-file)))
+                          (is (.equals (:content expected-gen-file) (:content actual-gen-file)))))))))))
 
 (deftest ^:eftest/synchronized watch-test
   (let [expected-generated-emp-book-file-content (slurp (fs/file expected-watch-test-dir-path "EMPBook.html"))
