@@ -44,11 +44,11 @@ jobs:
 
       - if: matrix.os == 'ubuntu-latest'
         name: Upload MKDocs
-        runs: mkdocs gh-deploy --force
+        run: mkdocs gh-deploy --force
 
       - if: matrix.os == 'ubuntu-latest'
         name: Build Uberjar
-        runs: lein with-profile uberjar uberjar
+        run: lein with-profile uberjar uberjar
 
       - if: matrix.os == 'ubuntu-latest'
         name: Create Release
