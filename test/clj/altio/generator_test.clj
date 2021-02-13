@@ -52,8 +52,11 @@
                                             {:name    file
                                              :content (slurp (fs/file root file))})
                                           files)})
-        expected-gen-files (->> expected-generate-all-test-dir-path (fs/walk walker) doall)
-        actual-gen-files   (->> actual-generate-all-test-dir-path (fs/walk walker) doall)]
+        expected-gen-files (->> expected-generate-all-test-dir-path (fs/walk walker))
+        actual-gen-files   (->> actual-generate-all-test-dir-path (fs/walk walker))]
+    (is (= (count expected-gen-files) (count actual-gen-files)))
+    (pprint expected-gen-files)
+    (pprint actual-gen-files)
     (doall (for [i-dir (range (count expected-gen-files))]
              (let [expected-gen-dirs (-> expected-gen-files (nth i-dir) :dirs)
                    actual-gen-dirs   (-> actual-gen-files (nth i-dir) :dirs)]

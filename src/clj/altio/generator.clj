@@ -129,7 +129,7 @@
   If watch? is true, return the watcher handler to be called to stop the watcher."
   [template-dir model-paths output-dir-path watch?]
   (let [egx-files (path->egx-files template-dir)]
-    ;; Need to parallelise this somehow.
+    ;; Need to parallelise this somehow. May be store all of the output dirs and then create them before hand.
     (doall (map #(generate % model-paths output-dir-path) egx-files)))
   (if watch?
     (watch template-dir model-paths output-dir-path)))
