@@ -8,6 +8,7 @@
 
 (def cli-options
   [["-d" "--dir DIR" "Template directory. Can be relative or absolute."
+    :id :template-dir
     :validate [#(fs/exists? %) "Directory must be valid."]]
    ["-m" "--model MODEL" "Path to XML model to use. Can be relative or absolute."
     :id :model-paths
@@ -74,10 +75,3 @@
       (case action
         "generate" (generate-all options)
         "validate" (println "Not yet!")))))
-
-(comment
-  (-main
-    "-d" "resources/templates"
-    "-m" "resources/templates/library.xml"
-    "-o" "resources/new-new-gen"
-    "generate"))

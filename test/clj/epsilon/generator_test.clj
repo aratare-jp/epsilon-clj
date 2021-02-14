@@ -17,7 +17,8 @@
 (def actual-generate-test-dir-path "test/resources/actual/generate_test")
 (def expected-generate-all-test-dir-path "test/resources/expected/generate_all_test")
 (def actual-generate-all-test-dir-path "test/resources/actual/generate_all_test")
-(def expected-watch-test-dir-path "test/resources/expected/watch_test")
+(def expected-watch-egx-test-dir-path "test/resources/expected/watch_egx_test")
+(def expected-watch-egl-test-dir-path "test/resources/expected/watch_egl_test")
 (def actual-watch-egx-test-dir-path "test/resources/actual/watch_egx_test")
 (def actual-watch-egl-test-dir-path "test/resources/actual/watch_egl_test")
 
@@ -65,18 +66,24 @@
                    actual-gen-dirs   (-> actual-gen-files (nth i-dir) :dirs)]
                (is (= expected-gen-dirs actual-gen-dirs))
                (doall (for [i-file (range (count (nth expected-gen-files i-dir)))]
-                        (let [expected-gen-file (-> expected-gen-files (nth i-dir) :files (->> (sort-by :name)) (nth i-file))
-                              actual-gen-file   (-> actual-gen-files (nth i-dir) :files (->> (sort-by :name)) (nth i-file))]
+                        (let [expected-gen-file (-> expected-gen-files
+                                                    (nth i-dir)
+                                                    :files
+                                                    (->> (sort-by :name)) (nth i-file))
+                              actual-gen-file   (-> actual-gen-files
+                                                    (nth i-dir)
+                                                    :files
+                                                    (->> (sort-by :name)) (nth i-file))]
                           (is (= (:name expected-gen-file) (:name actual-gen-file)))
                           (is (= (:content expected-gen-file) (:content actual-gen-file)))))))))))
 
-(deftest watch-egx-test
-  (let [expected-generated-emp-book-file-content (slurp (fs/file expected-watch-test-dir-path "EMPBook.html"))
-        expected-generated-emf-book-file-content (slurp (fs/file expected-watch-test-dir-path "EMFBook.html"))
+(deftest ^:eftest/synchronized watch-egx-test
+  (let [expected-generated-emp-book-file-content (slurp (fs/file expected-watch-egx-test-dir-path "EMPBook.html"))
+        expected-generated-emf-book-file-content (slurp (fs/file expected-watch-egx-test-dir-path "EMFBook.html"))
         watcher-handler                          (generate-all template-dir model-paths actual-watch-egx-test-dir-path true)
         template-content                         (slurp template-egx-file)]
     (try
-      (do (spit template-egx-file (str "\n\n\n" template-content))
+      (do (spit template-egx-file (str "\n\n\n\t\t\t" template-content))
           ;; Sleep for a bit to wait for the watcher to do its work.
           (Thread/sleep 1000)
           (let [actual-generated-emp-book-file-content (slurp (fs/file actual-watch-egx-test-dir-path "EMPBook.html"))
@@ -85,9 +92,9 @@
             (is (= expected-generated-emp-book-file-content actual-generated-emp-book-file-content))))
       (finally (watcher-handler)))))
 
-(deftest watch-egl-test
-  (let [expected-generated-emp-book-file-content (slurp (fs/file expected-watch-test-dir-path "EMPBook.html"))
-        expected-generated-emf-book-file-content (slurp (fs/file expected-watch-test-dir-path "EMFBook.html"))
+(deftest ^:eftest/synchronized watch-egl-test
+  (let [expected-generated-emp-book-file-content (slurp (fs/file expected-watch-egl-test-dir-path "EMPBook.html"))
+        expected-generated-emf-book-file-content (slurp (fs/file expected-watch-egl-test-dir-path "EMFBook.html"))
         watcher-handler                          (generate-all template-dir model-paths actual-watch-egl-test-dir-path true)
         template-content                         (slurp template-egl-file)]
     (try
