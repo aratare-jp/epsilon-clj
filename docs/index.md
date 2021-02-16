@@ -1,4 +1,4 @@
-<p align="center"><img src="images/logo/logo.png?raw=true" alt="epsilon logo"></p>
+<p align="center"><img src="assets/images/logo/logo.png?raw=true" alt="epsilon logo"></p>
 
 # Welcome!
 

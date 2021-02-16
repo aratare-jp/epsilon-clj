@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/images/logo/logo.png?raw=true" alt="epsilon logo"></p>
+<p align="center"><img src="docs/assets/images/logo/logo.png?raw=true" alt="epsilon logo"></p>
 
 # `epsilon-clj`
 
