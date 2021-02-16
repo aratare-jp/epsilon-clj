@@ -202,8 +202,8 @@ awesome_epsilon
     L epsilon-clj.jar
     L library.xml
     L templates
-        L book.html.egl
-        L book.html.egx
+    |   L book.html.egl
+    |   L book.html.egx
     L output
 ```
 
@@ -231,8 +231,8 @@ awesome_epsilon
     L epsilon-clj.jar
     L library.xml
     L templates
-        L book.html.egl
-        L book.html.egx
+    |   L book.html.egl
+    |   L book.html.egx
     L output
         L EMPBook.html
         L EMFBook.html
