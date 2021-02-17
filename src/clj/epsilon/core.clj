@@ -75,7 +75,7 @@
 
 (defn add-shutdown-hook [handlers]
   "Add shutdown hook so we can properly exit all the file watchers."
-  (-> Runtime/getRuntime
+  (-> (Runtime/getRuntime)
       (.addShutdownHook
         (fn []
           (println "Exiting. Cleaning up all watchers.")
