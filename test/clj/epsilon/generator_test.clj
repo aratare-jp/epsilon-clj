@@ -90,7 +90,7 @@
                 actual-generated-emf-book-file-content (slurp (fs/file actual-watch-egx-test-dir-path "EMFBook.html"))]
             (is (= expected-generated-emf-book-file-content actual-generated-emf-book-file-content))
             (is (= expected-generated-emp-book-file-content actual-generated-emp-book-file-content))))
-      (finally (watcher-handler)))))
+      (finally (:handler watcher-handler)))))
 
 (deftest ^:eftest/synchronized watch-egl-test
   (let [expected-generated-emp-book-file-content (slurp (fs/file expected-watch-egl-test-dir-path "EMPBook.html"))
@@ -105,4 +105,4 @@
                 actual-generated-emf-book-file-content (slurp (fs/file actual-watch-egl-test-dir-path "EMFBook.html"))]
             (is (= expected-generated-emf-book-file-content actual-generated-emf-book-file-content))
             (is (= expected-generated-emp-book-file-content actual-generated-emp-book-file-content))))
-      (finally (watcher-handler)))))
+      (finally (:handler watcher-handler)))))

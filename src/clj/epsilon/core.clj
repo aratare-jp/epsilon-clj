@@ -3,7 +3,7 @@
   (:require [puget.printer :refer [pprint]]
             [clojure.tools.cli :as cli]
             [clojure.string :as string]
-            [epsilon.generator :refer [generate-all]]
+            [epsilon.generator :refer [generate-all validate-all]]
             [me.raynes.fs :as fs]))
 
 (def cli-options
@@ -57,10 +57,11 @@
       {:exit-message (usage summary) :ok? true}
       errors
       {:exit-message (error-msg errors)}
-      ;; custom validation on arguments
-      (and (= 1 (count arguments))
-           (#{"generate" "validate"} (first arguments)))
-      {:action (first arguments) :options options}
+      (> 0 arguments)
+      (let [cmds (map #(#{"generate" "validate"} %) arguments)]
+        (if (some nil? cmds)
+          {:exit-message ("Unknown command found. Only accept \"generate\" and \"validate\".")}
+          {:actions arguments :options options}))
       :else
       {:exit-message (usage summary)})))
 
@@ -68,10 +69,25 @@
   (println msg)
   (System/exit status))
 
+(def actions
+  {"generate" generate-all
+   "validate" validate-all})
+
+(defn add-shutdown-hook [handlers]
+  "Add shutdown hook so we can properly exit all the file watchers."
+  (-> Runtime/getRuntime
+      (.addShutdownHook
+        (fn []
+          (println "Exiting. Cleaning up all watchers.")
+          (doall (for [handler handlers] (handler)))))))
+
 (defn -main [& args]
-  (let [{:keys [action options exit-message ok?]} (validate-args args)]
+  (let [{:keys [actions options exit-message ok?]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      (case action
-        "generate" (generate-all options)
-        "validate" (println "Not yet!")))))
+      (let [watchers (map #((get actions %) options) actions)]
+        (if (:watch? options)
+          (let [handlers (map :handler watchers)
+                futures  (map :handler watchers)]
+            (add-shutdown-hook handlers)
+            (doall (for [future futures] (.get future)))))))))
