@@ -7,40 +7,39 @@
            [org.eclipse.epsilon.emc.plainxml PlainXmlModel]
            [org.eclipse.epsilon.eol.exceptions EolRuntimeException]
            [epsilon CustomEglFileGeneratingTemplateFactory DirectoryWatchingUtility]
-           [clojure.lang ExceptionInfo]
            [java.io File]
            [org.eclipse.epsilon.evl EvlModule]))
 
 (defn model-path->xml [model-path]
   "Load the model at the path and convert it to PlainXmlModel."
-  (doto (new PlainXmlModel)
-    (.setFile (fs/file model-path))
-    (.setName (fs/name model-path))
-    (.load)))
+  (try (doto (new PlainXmlModel)
+         (.setFile (fs/file model-path))
+         (.setName (fs/name model-path))
+         (.load))
+       (catch Exception e
+         {:exception e})))
 
 (defn ->template-factory
   "Return a new EglFileGeneratingTemplateFactory that outputs to the given path."
   [^String output-dir-path]
   (doto (new CustomEglFileGeneratingTemplateFactory) (.setOutputRoot output-dir-path)))
 
-(defn ->egx-module
-  "Take a file path and parses that into an EGX module, which will then be set with the output path.
+(defmulti ->epsilon-module
+          "Given a path, convert it into the appropriate module based on its extension."
+          (fn [path & _] (fs/extension path)))
 
-  Returns a map with keys of :module and :problems? to indicate if there has been parse problems."
-  [egx-path output-dir-path]
+(defmethod ->epsilon-module ".egx"
+  [path output-dir-path]
   (let [template-factory (->template-factory output-dir-path)
-        ^File egx-file   (fs/file egx-path)
+        ^File egx-file   (fs/file path)
         egx-module       (doto (new EgxModule template-factory) (.parse egx-file))
         parse-problems   (.getParseProblems egx-module)]
     {:module    egx-module
      :problems? (if (.isEmpty parse-problems) false parse-problems)}))
 
-(defn ->evl-module
-  "Take a file path and parses that into an EVL module.
-
-  Returns a map with keys of :module and :problems? to indicate if there has been parse problems."
-  [evl-path]
-  (let [^File egx-file (fs/file evl-path)
+(defmethod ->epsilon-module ".evl"
+  [path & _]
+  (let [^File egx-file (fs/file path)
         evl-module     (doto (new EvlModule) (.parse egx-file))
         parse-problems (.getParseProblems evl-module)]
     {:module    evl-module
@@ -70,45 +69,52 @@
 
 (defn execute
   "Execute an EOL file with the given XML models."
-  ([eol-module model-paths]
-   (let [xml-models (map model-path->xml model-paths)]
-     (doall (map #(-> eol-module .getContext .getModelRepository (.addModel %)) xml-models))
-     (try
-       (do (.execute eol-module)
-           {:module eol-module})
-       (catch EolRuntimeException e {:exception e})))))
+  ([model-paths path & args]
+   (if (not (every? #(and (fs/file? %) (xml? %)) model-paths))
+     {:exception (ex-info "Model must be a valid XML file." nil)}
+     (let [{:keys [problems? module]} (apply ->epsilon-module path args)]
+       (if problems?
+         (do (doall (for [problem problems?] (log/error problem)))
+             {:problems? problems?})
+         (let [xml-models (map model-path->xml model-paths)]
+           (if (some :exception xml-models)
+             (first (filter :exception xml-models))
+             (do
+               (doall (map #(-> module .getContext .getModelRepository (.addModel %)) xml-models))
+               (try
+                 (do (.execute module)
+                     {:module module})
+                 (catch EolRuntimeException e
+                   {:exception e}))))))))))
 
 (defn generate
   "Generate an EGX file with the given XML models."
-  ([egx-path model-paths output-dir-path]
-   (log/info "Executing" egx-path)
-   (let [egx-module (->egx-module egx-path output-dir-path)]
-     (if-let [problems (:problems? egx-module)]
-       (do (doall (for [problem problems] (log/error problem)))
-           {:problems? problems})
-       (let [egx-module (:module egx-module)
-             generated  (execute egx-module model-paths)]
-         (if-let [exception (:exception generated)]
-           (do (log/error (.getMessage exception))
-               {:exception exception})
-           {:module egx-module}))))))
+  [egx-path model-paths output-dir-path]
+  (log/info "Executing" egx-path)
+  (let [{:keys [module problems? exception]} (execute model-paths egx-path output-dir-path)]
+    (cond
+      problems?
+      {:problems? problems?}
+      exception
+      (do (log/error (.getMessage exception))
+          {:exception exception})
+      :else
+      {:module module})))
 
 (defn validate
   "Validate an EVL file with the given XML models."
   [evl-path model-paths]
   (log/info "Validating" evl-path)
-  (let [evl-module (->evl-module evl-path)]
-    (if-let [problems (:problems evl-module)]
-      (do (doall (for [problem problems] (log/error problem)))
-          {:problems problems})
-      (let [evl-module (:module evl-module)
-            generated  (execute evl-module model-paths)]
-        (if-let [exception (:exception generated)]
-          (do (log/error (.getMessage exception))
-              {:exception exception})
-          (do (doall (for [constraint (-> evl-module .getContext .getUnsatisfiedConstraints)]
-                       (log/error constraint)))
-              {:module evl-module}))))))
+  (let [{:keys [module problems? exception]} (execute model-paths evl-path)]
+    (cond
+      problems?
+      {:problems? problems?}
+      exception
+      (do (log/error (.getMessage exception))
+          {:exception exception})
+      :else
+      (do (doall (for [constraint (-> module .getContext .getUnsatisfiedConstraints)] (log/error constraint)))
+          {:module module}))))
 
 (defmulti file-change-handler
           "Triggered when a file change. Will dispatch according to what type of file just got changed."
@@ -128,12 +134,12 @@
       (log/error "Unable to hot-reload because accompanying" egx-file-path "file is missing."))))
 
 (defmethod file-change-handler ".evl"
-  [file model-paths output-dir-path]
+  [file model-paths _]
   (log/info file "changed. Rerun validation.")
   (validate (.getAbsolutePath file) model-paths))
 
 (defmethod file-change-handler ".eol"
-  [file model-paths output-dir-path]
+  [file model-paths _]
   (log/info file "changed. Regenerating")
   ;; Nothing yet when EOL is created/modified. One thing we can do is to figure out
   ;; which modules depend on this EOL, then trigger a hot reload on the leaf modules
@@ -164,10 +170,12 @@
   ([{:keys [template-dir model-paths watch?]}]
    (validate-all template-dir model-paths watch?))
   ([template-dir model-paths watch?]
-   (let [evl-files (path->epsilon-files template-dir true evl?)]
-     (doall (map #(validate % model-paths) evl-files)))
-   (if watch?
-     (watch template-dir model-paths nil evl?))))
+   (let [evl-files   (path->epsilon-files template-dir true evl?)
+         evl-modules (doall (map #(validate % model-paths) evl-files))]
+     (if watch?
+       {:modules evl-modules
+        :watcher (watch template-dir model-paths nil evl?)}
+       {:modules evl-modules}))))
 
 (defn generate-all
   "Go through the provided template directory and generate everything.
@@ -176,8 +184,9 @@
   ([{:keys [template-dir model-paths output-dir-path watch?]}]
    (generate-all template-dir model-paths output-dir-path watch?))
   ([template-dir model-paths output-dir-path watch?]
-   (let [egx-files (path->epsilon-files template-dir true egx?)]
-     ;; Need to parallelise this somehow. May be store all of the output dirs and then create them before hand.
-     (doall (map #(generate % model-paths output-dir-path) egx-files)))
-   (if watch?
-     (watch template-dir model-paths output-dir-path))))
+   (let [egx-files   (path->epsilon-files template-dir true egx?)
+         egx-modules (doall (map #(generate % model-paths output-dir-path) egx-files))]
+     (if watch?
+       {:modules egx-modules
+        :watcher (watch template-dir model-paths output-dir-path)}
+       {:modules egx-modules}))))

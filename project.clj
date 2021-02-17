@@ -21,7 +21,9 @@
              :test    {:plugins        [[lein-cloverage "1.2.1"]
                                         [lein-eftest "0.5.9"]]
                        :test-paths     ["test/clj"]
-                       :dependencies   [[eftest "0.5.9"]]
+                       :dependencies   [[eftest "0.5.9"]
+                                        [tortue/spy "2.4.0"]
+                                        [expectations/clojure-test "1.2.1"]]
                        :resource-paths ["test/resources"]}
              :dev     [:test
                        {:dependencies [[lein-virgil "0.1.9"]]}]})

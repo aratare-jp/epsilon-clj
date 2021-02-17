@@ -1,0 +1,4 @@
+rule Library2Page transform library : t_library {
+	template : "library.html.egl"
+	target : "library.html"
+}

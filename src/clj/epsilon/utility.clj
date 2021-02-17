@@ -4,9 +4,9 @@
 (defn is-ext?
   "Check if a given path or file has the given extension."
   [path ext]
-  (if (fs/file? path)
-    (= ext (fs/extension (.toPath path)))
-    (= ext (fs/extension path))))
+  (if (string? path)
+    (= ext (fs/extension path))
+    (= ext (fs/extension (.toPath path)))))
 
 (defn egx?
   "Check if a given path or file is an EGX file."
@@ -27,6 +27,11 @@
   "Check if a given path or file is an EVL file."
   [path]
   (is-ext? path ".evl"))
+
+(defn xml?
+  "Check if a given path or file is an XML file."
+  [path]
+  (is-ext? path ".xml"))
 
 (defn replace-ext
   "Replace the given file's extension with the given extension.
