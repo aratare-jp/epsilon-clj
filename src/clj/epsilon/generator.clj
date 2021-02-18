@@ -22,7 +22,7 @@
 (defn ->template-factory
   "Return a new EglFileGeneratingTemplateFactory that outputs to the given path."
   [^String output-dir-path]
-  (doto (new CustomEglFileGeneratingTemplateFactory) (.setOutputRoot output-dir-path)))
+  (new CustomEglFileGeneratingTemplateFactory output-dir-path))
 
 (defmulti ->epsilon-module
           "Given a path, convert it into the appropriate module based on its extension."
@@ -71,7 +71,7 @@
   "Execute an EOL file with the given XML models."
   ([model-paths path & args]
    (if (not (every? #(and (fs/file? %) (xml? %)) model-paths))
-     {:exception (ex-info "Model must be a valid XML file." nil)}
+     {:exception (ex-info "Model must be a valid XML file." {})}
      (let [{:keys [problems? module]} (apply ->epsilon-module path args)]
        (if problems?
          (do (doall (for [problem problems?] (log/error problem)))

@@ -7,6 +7,11 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import java.io.File;
 
 public class CustomEglFileGeneratingTemplateFactory extends EglFileGeneratingTemplateFactory {
+	public CustomEglFileGeneratingTemplateFactory(String path) throws EglRuntimeException {
+		super();
+		setOutputRoot(path);
+	}
+
 	public void setOutputRoot(String path) throws EglRuntimeException {
 		File outputRoot = new File(path);
 		if (!outputRoot.exists()) {

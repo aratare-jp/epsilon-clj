@@ -61,6 +61,15 @@
       (let [{:keys [module problems? exception]} (generate egx-file-path model-paths output-dir-path)]
         (expect nil? module)
         (expect nil? problems?)
+        (expect (complement nil?) exception))))
+
+  (testing "Generate failure with invalid model"
+    (let [egx-file-path   "test/resources/templates/generate_fail_test/library.html.egx"
+          model-paths     ["test/resources/templates/generate_fail_test/library/xml"]
+          output-dir-path "test/resources/actual/generate_fail_test"]
+      (let [{:keys [module problems? exception]} (generate egx-file-path model-paths output-dir-path)]
+        (expect nil? module)
+        (expect nil? problems?)
         (expect (complement nil?) exception)))))
 
 (defexpect generate-all-test

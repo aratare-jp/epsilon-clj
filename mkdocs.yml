@@ -9,6 +9,7 @@ theme:
 nav:
   - Home: index.md
   - Quick Start: quick-start.md
+  - Troubleshooting: troubleshooting.md
 markdown_extensions:
   - def_list
   - pymdownx.highlight

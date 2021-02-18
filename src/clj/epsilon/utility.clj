@@ -1,12 +1,30 @@
 (ns epsilon.utility
-  (:require [me.raynes.fs :as fs]))
+  (:require [me.raynes.fs :as fs])
+  (:import [java.io File]))
 
-(defn is-ext?
-  "Check if a given path or file has the given extension."
+(defmulti is-ext?
+          "Check if a given path or file has the given extension."
+          (fn [path _] (class path)))
+
+(defmethod is-ext? String
   [path ext]
-  (if (string? path)
-    (= ext (fs/extension path))
-    (= ext (fs/extension (.toPath path)))))
+  (let [ext (if (= \. (first ext)) ext (str "." ext))]
+    (= ext (fs/extension path))))
+
+(defmethod is-ext? File
+  [path ext]
+  (is-ext? (.getAbsolutePath path) ext))
+
+(defmethod is-ext? :default
+  [_ _]
+  (throw (ex-info "Unknown type. Only support String and File." {})))
+;(defn is-ext?
+;  "Check if a given path or file has the given extension."
+;  [path ext]
+;  (let [ext (if (= \. (first ext)) ext (str "." ext))]
+;    (if (string? path)
+;      (= ext (fs/extension path))
+;      (= ext (fs/extension (.getAbsolutePath path))))))
 
 (defn egx?
   "Check if a given path or file is an EGX file."
