@@ -6,5 +6,5 @@ rule Book2PageHTML transform book : t_book {
 		return params;
 	}
 	template : "book.html.egl"
-	target : book.e_id.text + ".html"
+	target : "inner/" + book.e_id.text + ".html"
 }

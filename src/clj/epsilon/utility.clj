@@ -1,6 +1,8 @@
 (ns epsilon.utility
-  (:require [me.raynes.fs :as fs])
-  (:import [java.io File]))
+  (:require [me.raynes.fs :as fs]
+            [taoensso.timbre :as log])
+  (:import [java.io File]
+           [clojure.lang ExceptionInfo]))
 
 (defmulti is-ext?
           "Check if a given path or file has the given extension."
@@ -64,3 +66,14 @@
     (if (= \. (first ext))
       (str no-ext-file ext)
       (str no-ext-file "." ext))))
+
+(defn handle-exception [f]
+  (try
+    (f)
+    (catch Exception e
+      (if (= ExceptionInfo (class e))
+        (let [payload (:payload (.getData e))]
+          (if (seq? payload)
+            (doall (map #(log/error %) payload))
+            (log/error payload)))
+        (log/error e)))))

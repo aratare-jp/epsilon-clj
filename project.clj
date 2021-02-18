@@ -6,6 +6,7 @@
                  [org.eclipse.epsilon/epsilon-core "1.5.1"]
                  [mvxcvi/puget "1.3.1"]
                  [me.raynes/fs "1.4.6"]
+                 [medley "1.3.0"]
                  [com.taoensso/timbre "5.1.2"]
                  [io.methvin/directory-watcher "0.14.0"]]
   :min-lein-version "2.0.0"

@@ -4,7 +4,8 @@
             [clojure.tools.cli :as cli]
             [clojure.string :as string]
             [epsilon.generator :refer [generate-all validate-all]]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs]
+            [taoensso.timbre :as log]))
 
 (def cli-options
   [["-d" "--dir DIR" "Template directory. Can be relative or absolute."
@@ -57,11 +58,11 @@
       {:exit-message (usage summary) :ok? true}
       errors
       {:exit-message (error-msg errors)}
-      (> 0 arguments)
+      (> (count arguments) 0)
       (let [cmds (map #(#{"generate" "validate"} %) arguments)]
         (if (some nil? cmds)
-          {:exit-message ("Unknown command found. Only accept \"generate\" and \"validate\".")}
-          {:actions arguments :options options}))
+          {:exit-message "Unknown command found. Only accept \"generate\" and \"validate\"."}
+          {:actions (map keyword arguments) :options options}))
       :else
       {:exit-message (usage summary)})))
 
@@ -69,9 +70,9 @@
   (println msg)
   (System/exit status))
 
-(def actions
-  {"generate" generate-all
-   "validate" validate-all})
+(def actions-map
+  {:generate generate-all
+   :validate validate-all})
 
 (defn add-shutdown-hook [handlers]
   "Add shutdown hook so we can properly exit all the file watchers."
@@ -85,9 +86,10 @@
   (let [{:keys [actions options exit-message ok?]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      (let [watchers (map #((get actions %) options) actions)]
-        (if (:watch? options)
-          (let [handlers (map :handler watchers)
-                futures  (map :handler watchers)]
-            (add-shutdown-hook handlers)
-            (doall (for [future futures] (.get future)))))))))
+      (do
+        (let [watchers (doall (map #((get actions-map %) options) actions))]
+          (if (:watch? options)
+            (let [handlers (doall (map :handler watchers))
+                  futures  (doall (map :future watchers))]
+              (add-shutdown-hook handlers)
+              (doall (for [future futures] (.get future))))))))))
