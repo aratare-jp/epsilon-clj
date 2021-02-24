@@ -17,7 +17,7 @@
     :validate [#(fs/exists? %) "Model must be valid."]
     :assoc-fn (fn [opts opt v] (update opts opt conj v))]
    ["-o" "--output DIR" "Where to output the templates. Can be relative or absolute."
-    :id :output-dir]
+    :id :output-path]
    ["-v" nil "Verbosity level; may be specified multiple times to increase value"
     ;; If no long-option is specified, an option :id must be given
     :id :verbosity
@@ -58,11 +58,10 @@
       {:exit-message (usage summary) :ok? true}
       errors
       {:exit-message (error-msg errors)}
-      (> (count arguments) 0)
-      (let [cmds (map #(#{"generate" "validate"} %) arguments)]
-        (if (some nil? cmds)
-          {:exit-message "Unknown command found. Only accept \"generate\" and \"validate\"."}
-          {:actions (map keyword arguments) :options options}))
+      (not= (count arguments) 1)
+      {:exit-message "Only allow one argument."}
+      (#{"generate" "validate"} (first arguments))
+      {:action (keyword (first arguments)) :options options}
       :else
       {:exit-message (usage summary)})))
 
@@ -74,22 +73,21 @@
   {:generate generate-all
    :validate validate-all})
 
-(defn add-shutdown-hook [handlers]
+(defn add-shutdown-hook [handler]
   "Add shutdown hook so we can properly exit all the file watchers."
   (-> (Runtime/getRuntime)
       (.addShutdownHook
-        (fn []
-          (println "Exiting. Cleaning up all watchers.")
-          (doall (for [handler handlers] (handler)))))))
+        (new Thread
+             (fn []
+               (println "Exiting. Cleaning up all watchers.")
+               (handler))))))
 
 (defn -main [& args]
-  (let [{:keys [actions options exit-message ok?]} (validate-args args)]
+  (let [{:keys [action options exit-message ok?]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      (do
-        (let [watchers (doall (map #((get actions-map %) options) actions))]
-          (if (:watch? options)
-            (let [handlers (doall (map :handler watchers))
-                  futures  (doall (map :future watchers))]
-              (add-shutdown-hook handlers)
-              (doall (for [future futures] (.get future))))))))))
+      (let [{:keys [handler future]} ((get actions-map action) options)]
+        (if (:watch? options)
+          (do
+            (add-shutdown-hook handler)
+            (.get future)))))))

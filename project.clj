@@ -8,6 +8,7 @@
                  [me.raynes/fs "1.4.6"]
                  [medley "1.3.0"]
                  [com.taoensso/timbre "5.1.2"]
+                 [com.fzakaria/slf4j-timbre "0.3.20"]
                  [io.methvin/directory-watcher "0.14.0"]]
   :min-lein-version "2.0.0"
   :source-paths ["src/clj"]
