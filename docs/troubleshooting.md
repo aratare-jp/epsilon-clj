@@ -1,7 +1,7 @@
 # Troubleshooting
 
 This document serves as a place where you can find some of the most annoying and obscure bugs in Epsilon. Some of them
-are results of overlook and others are by design. Hopefully this page will give you the help you need to debug your
+are results of oversight and others are by design. Hopefully this page will give you the help you need to debug your
 templates.
 
 ## No file generated

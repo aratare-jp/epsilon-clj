@@ -376,10 +376,4 @@ That's it! Let's recap:
 In the end, Eclipse Epsilon is just another template engine. By having a merge engine to allow us to include 
 special places, we can truly take advantage of text generation without the fear of customisation.
 
-Here are some stuff you can look at to have a better understanding of concepts we've talk about here:
-
-- Model-driven Software Development
-- Eclipse Epsilon and its big family of languages
-- In-depth `epsilon-clj` usage, both CLI and Programmatic
-
 Happy coding!
