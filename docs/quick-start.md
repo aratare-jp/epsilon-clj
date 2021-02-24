@@ -21,10 +21,9 @@ mkdir awesome_epsilon
 
 # Move to the newly created directory.
 cd awesome_epsilon
-
-# Download epsilon-clj executable.
-wget <Enter URL here later>
 ```
+
+Now, follow the [Installation guide](installation.md) to set `epsilon-clj` up.
 
 For now, our project directory will look like this:
 
