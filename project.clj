@@ -1,6 +1,7 @@
-(defproject epsilon "v1.0.0"
+(defproject org.clojars.aratare/epsilon "v1.0.0"
   :description "Model-driven code generator"
   :url "http://github.com/aratare-jp/epsilon-clj"
+  :license "Apache 2.0"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/tools.cli "1.0.194"]
                  [org.eclipse.epsilon/epsilon-core "1.5.1"]

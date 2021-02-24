@@ -50,7 +50,7 @@ making sure they still have their favourite workflow.
 - [x] XML model
 - [ ] EDN model
 - [ ] JSON model
-- [ ] Hot-reload on file changes
+- [x] Hot-reload on file changes
 - [ ] REPL
 
 # Quick start
@@ -86,11 +86,11 @@ use `generate-all`:
 
 ;; Using watch mode will return a watcher handler, which can be used to stop the watcher.
 ;; Note that this function will first generate all files.
-(let [handler (gen/generate-all "templates" ["model.xml"] "gen" true)]
+(let [{:keys [handler]} (gen/generate-all "templates" ["model.xml"] "gen" true)]
   (handler))
 
 ;; If you only want to watch a directory, use watch instead:
-(let [handler (gen/watch "templates" ["model.xml"] "gen")]
+(let [{:keys [handler]} (gen/watch "templates" ["model.xml"] "gen")]
   (handler))
 ```
 
