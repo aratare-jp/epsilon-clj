@@ -1,3 +1,17 @@
 site_name: epsilon-clj
+repo_url: https://github.com/aratare-jp/epsilon-clj
+site_author: Rex Truong
+logo: assets/images/logo/logo.png
 theme:
   name: material
+  palette:
+    scheme: slate
+nav:
+  - Home: index.md
+  - Quick Start: quick-start.md
+  - Troubleshooting: troubleshooting.md
+markdown_extensions:
+  - def_list
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - admonition

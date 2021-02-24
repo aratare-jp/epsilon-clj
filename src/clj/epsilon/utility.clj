@@ -1,12 +1,32 @@
 (ns epsilon.utility
-  (:require [me.raynes.fs :as fs]))
+  (:require [me.raynes.fs :as fs]
+            [taoensso.timbre :as log])
+  (:import [java.io File]
+           [clojure.lang ExceptionInfo]))
 
-(defn is-ext?
-  "Check if a given path or file has the given extension."
+(defmulti is-ext?
+          "Check if a given path or file has the given extension."
+          (fn [path _] (class path)))
+
+(defmethod is-ext? String
   [path ext]
-  (if (fs/file? path)
-    (= ext (fs/extension (.toPath path)))
+  (let [ext (if (= \. (first ext)) ext (str "." ext))]
     (= ext (fs/extension path))))
+
+(defmethod is-ext? File
+  [path ext]
+  (is-ext? (.getAbsolutePath path) ext))
+
+(defmethod is-ext? :default
+  [_ _]
+  (throw (ex-info "Unknown type. Only support String and File." {})))
+;(defn is-ext?
+;  "Check if a given path or file has the given extension."
+;  [path ext]
+;  (let [ext (if (= \. (first ext)) ext (str "." ext))]
+;    (if (string? path)
+;      (= ext (fs/extension path))
+;      (= ext (fs/extension (.getAbsolutePath path))))))
 
 (defn egx?
   "Check if a given path or file is an EGX file."
@@ -28,6 +48,11 @@
   [path]
   (is-ext? path ".evl"))
 
+(defn xml?
+  "Check if a given path or file is an XML file."
+  [path]
+  (is-ext? path ".xml"))
+
 (defn replace-ext
   "Replace the given file's extension with the given extension.
 
@@ -41,3 +66,14 @@
     (if (= \. (first ext))
       (str no-ext-file ext)
       (str no-ext-file "." ext))))
+
+(defn handle-exception [f]
+  (try
+    (f)
+    (catch Exception e
+      (if (= ExceptionInfo (class e))
+        (let [payload (:payload (.getData e))]
+          (if (seq? payload)
+            (doall (map #(log/error %) payload))
+            (log/error payload)))
+        (log/error e)))))

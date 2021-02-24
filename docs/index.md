@@ -1,19 +1,16 @@
-<p align="center"><img src="images/logo/logo.png?raw=true" alt="epsilon logo"></p>
+<p align="center"><img src="assets/images/logo/logo.png?raw=true" alt="epsilon logo"></p>
 
-# Welcome to `epsilon-clj`
+# Welcome!
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+`epsilon-clj` is a neat wrapper around Eclipse Epsilon to add various goodness.
 
-## Commands
+Here you can find various pages in this site:
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- [5-minutes quick start](quick-start.md)
+- [Installation](installation.md)
+- Usage
+    - [CLI](usage/CLI.md)
+    - [Programmatic](usage/programmatic.md)
+- [Background and Rationale](about.md)
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+Enjoy!
