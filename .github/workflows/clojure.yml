@@ -66,6 +66,12 @@ jobs:
     needs: test
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
+      - uses: actions/checkout@v2
+
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          lein: 2.9.5
+
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
