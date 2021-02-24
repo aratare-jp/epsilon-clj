@@ -9,9 +9,17 @@ theme:
 nav:
   - Home: index.md
   - Quick Start: quick-start.md
+  - Usage:
+    - CLI: usage/CLI.md
+    - Programmatic: usage/programmatic.md
   - Troubleshooting: troubleshooting.md
 markdown_extensions:
   - def_list
   - pymdownx.highlight
   - pymdownx.superfences
   - admonition
+plugins:
+  - macros
+extra:
+  file:
+    version: v1.0.0

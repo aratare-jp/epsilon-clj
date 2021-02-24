@@ -4,7 +4,7 @@ Welcome!
 
 `epsilon-clj` was created as an attempt to make [Eclipse Epsilon](https://www.eclipse.org/epsilon/) a bit easier to 
 integrate and work with, since the vanilla version lacks various features that are indispensable in today's workflow.
-Having features like hot-reload and CLI-friendliness enables you as a developer to work faster and easier.
+Having features like hot-reload enables you as a developer to work faster and easier.
 
 Here we will use `epsilon-clj` to build a mini website for a library to illustrate these points.
 
@@ -43,7 +43,7 @@ A model is essentially a representation of a domain, concept or "thing". For exa
 - A flowchart is a representation of a process.
 - A scientific model represents a certain phenomenon in real life.
 
-A model captures the essence of a domain or problem that you are working on. So here, since we are building a 
+A model captures the essence of a domain or problem that you are working on. Since we are building a 
 library website, our model will represent our library.
 
 A model in `epsilon-clj` is just a plain XML file. So create a file called `library.xml` in our newly created directory 
@@ -76,8 +76,8 @@ and insert following content into it:
 </library>
 ```
 
-You can see we have a root `library` element which contains a bunch of `book`s, each has its own attributes like 
-`title` and `page`, as well as `author`s.
+You can see we have a root `library` element which contains multiple `book` elements, each has its own attributes like 
+`title` and `page`, as well as `author`.
 
 Your directory should now look like this:
 
@@ -98,7 +98,7 @@ However, templates alone are not enough: We need specific details. Having only a
 useful without the details and measurements.
 
 Templates receive these details and measurements from models. To illustrate this, let's create our very first 
-template. But first, we need a place to store these templates. Run the following commands in your terminal:
+template. First, we need a place to store these templates. Run the following commands in your terminal:
 
 ```bash linenums="1"
 mkdir templates
@@ -122,7 +122,7 @@ Let's go through some interesting things we just:
 - At line 1, we create an `h1` HTML tag based on a book's `index` and `title`.
 - From line 4 to 6, we are creating `li` tags based on a book's author.
 
-I won't go too deep into its syntax since it requires a more in-depth look, but a more interesting question is: _**How 
+I won't go too deep into its syntax, but a more interesting question is: _**How 
 does this template understand which book to use?**_
 
 The answer is: _**Template coordinator**_, as we will see in the very next section shortly.
@@ -238,7 +238,8 @@ awesome_epsilon
         L EMFBook.html
 ```
 
-Notice the two new generated files inside `output`: `EMPBook.html` and `EMFBook.html`. Let's a look at their content:
+Notice the two new generated files inside `output`: `EMPBook.html` and `EMFBook.html`. Let's have a look at their 
+content:
 
 EMFBook.html
 ```html
@@ -273,10 +274,10 @@ Let's first have some observation: Everything we've done until now is one-way:
 models -> templates -> generated files.
 ```
 This means that if you want to include other things in the generated files, they will be rewritten the next time you 
-regenerate! The only way forward is to include them in the templates. But sometimes there are things you want to 
+regenerate! The only way forward is to include them in the templates. However, sometimes there are things you want to 
 specifically have in the generated files, but makes no sense to have them in the templates.
 
-Let's imagine our library example website is so good we start selling them to people. And let's say one client wants 
+Let's imagine our library example website is so good we start selling them to people. Let's say one client wants 
 to add a new piece of information at the bottom of each book. How do you approach this? You can't include
 it in the generated files for the stated reason, but it also makes no sense to make it in the template because other 
 clients may not want it. 
@@ -321,7 +322,7 @@ Anything between those two lines will be reserved throughout future regeneration
 ```
 
 Nice! Let's trigger some regeneration by adding a newline in `book.html.egx` (anywhere is fine). Check the content of 
-`EMPBook.html` again and you'll see:
+`EMPBook.html` again, and you'll see:
 
 ```html
 <!-- Omit for brevity -->
@@ -332,8 +333,8 @@ Nice! Let's trigger some regeneration by adding a newline in `book.html.egx` (an
 Hang on! That's not right! Where's the custom code?
 
 It turns out that protected regions are by default disabled: notice the word `off` at the end. Turn it on by simply 
-replace `off` with `on`, and then add the custom code again. Now let's readd the cool code and trigger some 
-regeneration. The content of `EMPBook.html` is now:
+replace `off` with `on`, and then add the custom code again. After triggering a regeneration, the content of `EMPBook.
+html` is now:
 
 ```html
 <!-- Omit for brevity -->
@@ -366,13 +367,13 @@ Magic!
     later on.
 
 ## Wrap Up
-And that's it! Let's recap:
+That's it! Let's recap:
 
 - You've learnt what models and templates are and how they can work together to create files.
 - You've learnt how just creating files won't be enough for customisation, and how protected regions can solve this.
 - You've learnt how `epsilon-clj` can provide some nice features like hot-reload so you can work much faster.
 
-In the end, Eclipse Epsilon is just another template engine. But by having a merge engine to allow us to include 
+In the end, Eclipse Epsilon is just another template engine. By having a merge engine to allow us to include 
 special places, we can truly take advantage of text generation without the fear of customisation.
 
 Here are some stuff you can look at to have a better understanding of concepts we've talk about here:
