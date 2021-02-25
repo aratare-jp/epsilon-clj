@@ -52,8 +52,24 @@ Validate a single EVL file.
 Watch over a directory for file changes. It takes a list of predicates which will be run against file changes to 
 determine if it should be kept or not.
 
+## Watch mode (Important!)
+
+`watch`, as well as `generate-all` and `validate-all` in watch mode will _not_ block the current 
+thread. Instead, when called in watch mode they will return a map that has 2 keys: `:future` and `:handler`.
+
+- `:handler` refers to the function that when called when stop the current watcher.
+- `:future` refers to the `CompletableFuture` returned by the watch service. Use this to join the watcher thread.
+
+For example:
+
 ```clojure
 (require '[epsilon.generator :as gen])
 
-(gen/watch "templates" ["model.xml"] "output")
+(let [{:keys [handler future]} (gen/watch "templates" ["model.xml"] "output")]
+  ;; Call this function will stop the watcher thread.
+  (handler)
+  ;; Wait for the watcher thread to finish and then join it.
+  (.get future))
 ```
+
+The above code block will also work for `generate-all` and `validate-all` in watch mode.

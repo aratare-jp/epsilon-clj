@@ -4,13 +4,15 @@
 
 `epsilon-clj` is a neat wrapper around Eclipse Epsilon to add various goodness.
 
-Here you can find various pages in this site:
+This page serves as a point of reference where you can find various pages in this site:
 
-- [5-minutes quick start](quick-start.md)
+- [Background and Rationale](about.md)
 - [Installation](installation.md)
+- [Quick Start](quick-start.md)
 - Usage
     - [CLI](usage/CLI.md)
     - [Programmatic](usage/programmatic.md)
-- [Background and Rationale](about.md)
+- [Resources](resources.md)
+- [Troubleshooting](troubleshooting.md)
 
 Enjoy!

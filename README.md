@@ -3,6 +3,7 @@
 # `epsilon-clj`
 
 [![codecov](https://codecov.io/gh/aratare-jp/epsilon-clj/branch/master/graph/badge.svg?token=RJCEPYBF3I)](https://codecov.io/gh/aratare-jp/epsilon-clj)
+
 | Branch | Status |
 |----|----|
 |Master|![Master](https://github.com/aratare-jp/epsilon-clj/workflows/Clojure%20CI/badge.svg?branch=master)|
@@ -11,39 +12,8 @@
 A neat wrapper around [Eclipse Epsilon](https://www.eclipse.org/epsilon/) to add
 various goodness.
 
-For more details on Model-Driven Software Development (MDSD), check
-out [here](https://en.wikipedia.org/wiki/Model-driven_engineering).
-
 # Status
-
 `ALPHA`
-
-# Installation
-
-TBC
-
-# What is it?
-
-[Eclipse Epsilon](https://www.eclipse.org/epsilon/) is a code generator just
-like other various frameworks out
-there: [Selmer](https://github.com/yogthos/Selmer)
-, [StringTemplate](https://www.stringtemplate.org/)
-, [ThymeLeaf](https://www.thymeleaf.org/)
-, [Django](https://docs.djangoproject.com/en/dev/ref/templates/builtins/), etc.
-
-What differentiates Epsilon is that it has a merge engine so that your
-hand-written code inside the generated files is kept throughout other generation
-cycles via **protected regions**.
-
-Vanilla Epsilon, however, has much left to be desired. It lacks various features
-such as hot-reload and CLI-friendly interface that truly enhance the development
-and deployment process, which is something of a must in today's standard.
-
-Enters `epsilon-clj`.
-
-Sprinkled with goodness, `epsilon-clj` aims to be the bridge between Epsilon and
-Clojure to bring Model-driven Software Development closer to clojurists while
-making sure they still have their favourite workflow.
 
 # Features
 
@@ -53,53 +23,13 @@ making sure they still have their favourite workflow.
 - [x] Hot-reload on file changes
 - [ ] REPL
 
-# Quick start
+# [Installation](https://aratare-jp.github.io/epsilon-clj/installation/)
 
-## CLI
+# [About](https://aratare-jp.github.io/epsilon-clj/about/)
 
-Running `epsilon-clj` in a CLI is as simple as executing a Jar file:
+# [Quick start](https://aratare-jp.github.io/epsilon-clj/quick-start/)
 
-```bash
-# Display help message.
-$ java -jar epsilon-clj.jar -h
-
-# Execute generation with a model, a template directory and an output directory
-$ java -jar epsilon-clj.jar -m "model.xml"  -d "templates" -o "gen" generate
-
-# Execute watch mode with a model, a template directory and an output directory
-$ java -jar epsilon-clj.jar -m "model.xml"  -d "templates" -o "gen" -w generate
-
-# Execute validation with a model and a template directory
-$ java -jar epsilon-clj.jar -m "model.xml"  -d "templates" validate
-```
-
-## Programmatic
-
-To use `epsilon-clj` in code, simply require the namespace and
-use `generate-all`:
-
-```clojure
-(require '[epsilon.generator :as gen])
-
-;; Takes in the template directory, the watch mode flag, the models and the output directory.
-(gen/generate-all "templates" ["model.xml"] "gen" false)
-
-;; Using watch mode will return a watcher handler, which can be used to stop the watcher.
-;; Note that this function will first generate all files.
-(let [{:keys [handler]} (gen/generate-all "templates" ["model.xml"] "gen" true)]
-  (handler))
-
-;; If you only want to watch a directory, use watch instead:
-(let [{:keys [handler]} (gen/watch "templates" ["model.xml"] "gen")]
-  (handler))
-```
-
-# Documentation
-
-Check out the full documentation
-for `epsilon-clj` [here](https://aratare-jp.github.io/epsilon-clj).
-
-For Epsilon's specifics, check it out [here](https://www.eclipse.org/epsilon/).
+# [Documentation](https://aratare-jp.github.io/epsilon-clj/)
 
 # Contributing
 
