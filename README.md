@@ -23,13 +23,13 @@ various goodness.
 - [x] Hot-reload on file changes
 - [ ] REPL
 
-# [Installation](https://aratare-jp.github.io/epsilon-clj/installation/)
+# [Installation](https://aratare-jp.github.io/epsilon-clj/latest/installation/)
 
-# [About](https://aratare-jp.github.io/epsilon-clj/about/)
+# [About](https://aratare-jp.github.io/epsilon-clj/latest/about/)
 
-# [Quick start](https://aratare-jp.github.io/epsilon-clj/quick-start/)
+# [Quick start](https://aratare-jp.github.io/epsilon-clj/latest/quick-start/)
 
-# [Documentation](https://aratare-jp.github.io/epsilon-clj/)
+# [Documentation](https://aratare-jp.github.io/epsilon-clj/latest/)
 
 # Contributing
 
