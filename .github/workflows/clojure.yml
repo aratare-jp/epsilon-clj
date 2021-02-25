@@ -64,6 +64,10 @@ jobs:
       - run: pip install mkdocs-macros-plugin
       - run: pip install mike
 
+      - run: |
+          git config user.name "Rex Truong"
+          git config user.email "rextruong@pm.me"
+
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
