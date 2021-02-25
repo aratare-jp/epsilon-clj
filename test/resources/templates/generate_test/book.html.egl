@@ -8,3 +8,8 @@
 	<li>[%=author.text%]
 [%	} %]
 </ul>
+
+[%= protected(out, "<!--", "foo", false, "-->") %]
+
+[%= startProtected(out, "<!--", "bar", false, "-->") %]
+[%= endProtected(out) %]

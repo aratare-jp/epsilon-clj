@@ -23,3 +23,5 @@ plugins:
 extra:
   file:
     version: v1.0.0
+  version:
+    provider: mike

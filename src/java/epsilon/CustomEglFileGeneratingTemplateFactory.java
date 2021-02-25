@@ -1,16 +1,19 @@
 package epsilon;
 
 import org.eclipse.epsilon.egl.EglFileGeneratingTemplateFactory;
+import org.eclipse.epsilon.egl.EglTemplate;
 import org.eclipse.epsilon.egl.exceptions.EglRuntimeException;
+import org.eclipse.epsilon.egl.spec.EglTemplateSpecification;
+import org.eclipse.epsilon.eol.dom.Operation;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class CustomEglFileGeneratingTemplateFactory extends EglFileGeneratingTemplateFactory {
-	public CustomEglFileGeneratingTemplateFactory(String path) throws EglRuntimeException {
-		super();
-		setOutputRoot(path);
-	}
+	private List<Operation> ops = new ArrayList<>();
 
 	public void setOutputRoot(String path) throws EglRuntimeException {
 		File outputRoot = new File(path);
@@ -21,5 +24,16 @@ public class CustomEglFileGeneratingTemplateFactory extends EglFileGeneratingTem
 		}
 		this.outputRootPath = outputRoot.getAbsolutePath();
 		this.outputRoot = outputRoot.toURI();
+	}
+
+	public void addOperations(Collection<Operation> ops) {
+		this.ops.addAll(ops);
+	}
+
+	@Override
+	protected EglTemplate createTemplate(EglTemplateSpecification spec) throws Exception {
+		var template = super.createTemplate(spec);
+		template.getOperations().addAll(ops);
+		return template;
 	}
 }

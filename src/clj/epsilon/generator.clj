@@ -3,11 +3,13 @@
             [me.raynes.fs :as fs]
             [taoensso.timbre :as log]
             [epsilon.utility :refer :all]
-            [medley.core :as m])
+            [medley.core :as m]
+            [clojure.java.io :as io])
   (:import [org.eclipse.epsilon.egl EgxModule]
            [org.eclipse.epsilon.emc.plainxml PlainXmlModel]
            [epsilon CustomEglFileGeneratingTemplateFactory DirectoryWatchingUtility]
-           [org.eclipse.epsilon.evl EvlModule]))
+           [org.eclipse.epsilon.evl EvlModule]
+           [org.eclipse.epsilon.egl.internal EglModule]))
 
 (defn path->xml
   "Load the model at the path and convert it to PlainXmlModel."
@@ -19,16 +21,28 @@
 
 (defn ->template-factory
   "Return a new template factory that outputs to the given path."
-  [path]
-  (new CustomEglFileGeneratingTemplateFactory path))
+  [path ops]
+  (doto (new CustomEglFileGeneratingTemplateFactory)
+    (.setOutputRoot path)
+    (.addOperations ops)))
 
 (defmulti ->epsilon-module
   "Given a path, convert it into the appropriate module based on its extension."
   (fn [path & _] (fs/extension path)))
 
+(defmethod ->epsilon-module ".egl"
+  [path]
+  (let [egl-file       (fs/file path)
+        egl-module     (doto (new EglModule) (.parse egl-file))
+        parse-problems (.getParseProblems egl-module)]
+    (if (empty? parse-problems)
+      egl-module
+      (throw (ex-info "Parsed problems found" {:payload parse-problems})))))
+
 (defmethod ->epsilon-module ".egx"
   [path output-path]
-  (let [factory        (->template-factory output-path)
+  (let [ops            (log/spy :info (-> "protected.egl" io/resource fs/file ->epsilon-module .getOperations))
+        factory        (->template-factory output-path ops)
         egx-file       (fs/file path)
         egx-module     (doto (new EgxModule factory) (.parse egx-file))
         parse-problems (.getParseProblems egx-module)]
@@ -37,7 +51,7 @@
       (throw (ex-info "Parsed problems found" {:payload parse-problems})))))
 
 (defmethod ->epsilon-module ".evl"
-  [path & _]
+  [path]
   (let [evl-file       (fs/file path)
         evl-module     (doto (new EvlModule) (.parse evl-file))
         parse-problems (.getParseProblems evl-module)]
@@ -169,3 +183,8 @@
      (if watch?
        (watch template-dir model-paths output-path [egx? egl? evl? xml?])
        egx-modules))))
+
+(comment
+  (generate "test/resources/templates/generate_test/library.html.egx"
+            ["test/resources/templates/generate_test/library.xml"]
+            "test/resources/actual"))

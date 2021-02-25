@@ -1,0 +1,12 @@
+[%
+operation startProtected(out, start, id, enabled, end) {
+	return out.startPreserve(start, end, id, enabled);
+}
+
+operation endProtected(out) {
+	return out.stopPreserve();
+}
+
+operation protected(out, start, id, enabled, end) { %]
+[%= out.startPreserve(start, end, id, enabled) %]
+[%= out.stopPreserve() %][% } %]

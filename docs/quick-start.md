@@ -297,7 +297,7 @@ Let's make some changes to our `book.html.egl` template:
 	<li>[%=author.text%]
 [%	} %]
 </ul>
-[% protected("<!--", "Enter your custom code here", "-->") %]
+[%= protected(out, "<!--", "Enter your custom code here", false, "-->") %]
 ```
 
 Notice the last line: this is where we declare a protected region.
@@ -307,8 +307,8 @@ will have something like this at the end of the file:
 
 ```html
 <!-- Omit for brevity -->
-<!-- protected region: Enter your custom code here off -->
-<!-- end protected region -->
+<!-- protected region Enter your custom code here off begin -->
+<!-- protected region Enter your custom code here end -->
 ```
 
 Anything between those two lines will be reserved throughout future regenerations. So let's insert some cool code into 
@@ -316,9 +316,9 @@ Anything between those two lines will be reserved throughout future regeneration
 
 ```html
 <!-- Omit for brevity -->
-<!-- protected region: Enter your custom code here off -->
+<!-- protected region Enter your custom code here off begin -->
 <h1>Epsilon is awesome!</h1>
-<!-- end protected region -->
+<!-- protected region Enter your custom code here end -->
 ```
 
 Nice! Let's trigger some regeneration by adding a newline in `book.html.egx` (anywhere is fine). Check the content of 
@@ -326,8 +326,8 @@ Nice! Let's trigger some regeneration by adding a newline in `book.html.egx` (an
 
 ```html
 <!-- Omit for brevity -->
-<!-- protected region: Enter your custom code here off -->
-<!-- end protected region -->
+<!-- protected region Enter your custom code here off begin -->
+<!-- protected region Enter your custom code here end -->
 ```
 
 Hang on! That's not right! Where's the custom code?
@@ -338,9 +338,9 @@ html` is now:
 
 ```html
 <!-- Omit for brevity -->
-<!-- protected region: Enter your custom code here off -->
+<!-- protected region Enter your custom code here on begin -->
 <h1>Epsilon is awesome!</h1>
-<!-- end protected region -->
+<!-- protected region Enter your custom code here end -->
 ```
 
 Magic!
@@ -350,17 +350,17 @@ Magic!
     also have default content, i.e. things you want to put there by default. For example, let's say we have:
 
     ```
-    [% startProtected("<!--", "Enter your custom code here", "-->") %]
+    [%= startProtected(out, "<!--", "Enter your custom code here", false, "-->") %]
     <h1>Hello world!</h1>
-    [% endProtected %]
+    [% endProtected(out) %]
     ```
 
     it will generate something like this:
 
     ```html
-    <!-- protected region: Enter your custom code here off -->
+    <!-- protected region Enter your custom code here off begin -->
     <h1>Hello world!</h1>
-    <!-- end protected region -->
+    <!-- protected region Enter your custom code here end -->
     ```
 
     It is suitable for places where you want to have default content but also allow users to change the content 
