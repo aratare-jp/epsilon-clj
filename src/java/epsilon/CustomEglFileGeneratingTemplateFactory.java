@@ -32,7 +32,7 @@ public class CustomEglFileGeneratingTemplateFactory extends EglFileGeneratingTem
 
 	@Override
 	protected EglTemplate createTemplate(EglTemplateSpecification spec) throws Exception {
-		var template = super.createTemplate(spec);
+		EglTemplate template = super.createTemplate(spec);
 		template.getOperations().addAll(ops);
 		return template;
 	}
