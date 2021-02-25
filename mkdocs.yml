@@ -1,7 +1,6 @@
 site_name: epsilon-clj
 repo_url: https://github.com/aratare-jp/epsilon-clj
 site_author: Rex Truong
-logo: assets/images/logo/logo.png
 theme:
   name: material
   palette:
