@@ -2,6 +2,8 @@
 
 # `epsilon-clj`
 
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.aratare/epsilon.svg)](https://clojars.org/org.clojars.aratare/epsilon)
+
 [![codecov](https://codecov.io/gh/aratare-jp/epsilon-clj/branch/master/graph/badge.svg?token=RJCEPYBF3I)](https://codecov.io/gh/aratare-jp/epsilon-clj)
 
 | Branch | Status |
