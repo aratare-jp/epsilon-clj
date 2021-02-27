@@ -14,7 +14,7 @@ Installing `epsilon-clj` is as easy as downloading a JAR file and executing it:
 
 === "Linux/MacOS"
     ```
-    curl https://github.com/aratare-jp/epsilon-clj/releases/download/v1.0.0/epsilon-v1.0.0-standalone.jar
+    curl https://github.com/aratare-jp/epsilon-clj/releases/download/{{ file.version }}/epsilon-{{ file.version }}-standalone.jar
     ```
 
 === "Windows"
