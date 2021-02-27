@@ -4,12 +4,16 @@
             [taoensso.timbre :as log]
             [epsilon.utility :refer :all]
             [medley.core :as m]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [clojure.string :as string])
   (:import [org.eclipse.epsilon.egl EgxModule]
            [org.eclipse.epsilon.emc.plainxml PlainXmlModel]
            [epsilon CustomEglFileGeneratingTemplateFactory DirectoryWatchingUtility]
            [org.eclipse.epsilon.evl EvlModule]
-           [org.eclipse.epsilon.egl.internal EglModule]))
+           [org.eclipse.epsilon.egl.internal EglModule]
+           [java.net URL]
+           [java.io File]
+           [java.nio.file Path]))
 
 (defn path->xml
   "Load the model at the path and convert it to PlainXmlModel."
@@ -32,8 +36,11 @@
 
 (defmethod ->epsilon-module ".egl"
   [path]
-  (let [egl-file       (fs/file path)
-        egl-module     (doto (new EglModule) (.parse egl-file))
+  (let [^File egl-file (case (class path)
+                         File path
+                         Path (.toFile path)
+                         String (fs/file path))
+        egl-module     (doto (new EglModule) (.parse (.toURI egl-file)))
         parse-problems (.getParseProblems egl-module)]
     (if (empty? parse-problems)
       egl-module
@@ -41,7 +48,15 @@
 
 (defmethod ->epsilon-module ".egx"
   [path output-path]
-  (let [ops            (log/spy :info (-> "protected.egl" io/resource fs/file ->epsilon-module .getOperations))
+  (let [ops            (-> "protected.egl"
+                           io/resource
+                           ((fn [^URL url]
+                              (let [egl-module     (doto (new EglModule) (.parse (.toURI url)))
+                                    parse-problems (.getParseProblems egl-module)]
+                                (if (empty? parse-problems)
+                                  egl-module
+                                  (throw (ex-info "Parsed problems found" {:payload parse-problems}))))))
+                           .getOperations)
         factory        (->template-factory output-path ops)
         egx-file       (fs/file path)
         egx-module     (doto (new EgxModule factory) (.parse egx-file))
@@ -162,6 +177,11 @@
   ([template-dir model-paths]
    (validate-all template-dir model-paths true))
   ([template-dir model-paths watch?]
+   (log/info
+     (->> ["Validation will now begin with the following:"
+           (str "- Template directory: " template-dir)
+           (str "- Model paths: " model-paths)]
+          (string/join \newline)))
    (let [evl-files   (path->epsilon-files template-dir [evl?])
          evl-modules (doall (map #(validate % model-paths) evl-files))]
      (if watch?
@@ -177,6 +197,12 @@
   ([template-dir model-paths output-path]
    (generate-all template-dir model-paths output-path true))
   ([template-dir model-paths output-path watch?]
+   (log/info
+     (->> ["Generation will now begin with the following:"
+           (str "- Template directory: " template-dir)
+           (str "- Model paths: " model-paths)
+           (str "- Output path: " output-path)]
+          (string/join \newline)))
    (let [_           (validate-all template-dir model-paths false)
          egx-files   (path->epsilon-files template-dir [egx?])
          egx-modules (doall (map #(generate % model-paths output-path) egx-files))]
