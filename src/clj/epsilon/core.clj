@@ -24,11 +24,10 @@
     :id :min-level
     :default 0
     :update-fn inc]
-   ["-D" "--[no-]daemon" "Detach the process" :default true]
    ["-w" "--watch" "Watch the given template directory"
     :id :watch?
     :default false]
-   ["-h" "--help"]])
+   ["-h" "--help" "Display this message"]])
 
 (defn usage [options-summary]
   (->> ["Usage: program-name [options] action"
@@ -37,7 +36,7 @@
         options-summary
         ""
         "Actions:"
-        "  generate    Generate everything inside the provided template directory"
+        "  generate    Generate everything inside the provided template directory. This will validate first."
         "  validate    Validate everything inside the provided template directory"
         ""
         "Please refer to the manual page for more information."]

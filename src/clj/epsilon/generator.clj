@@ -43,7 +43,15 @@
 
 (defmethod ->epsilon-module ".egx"
   [path output-path]
-  (let [ops            (-> "protected.egl" io/resource fs/file ->epsilon-module .getOperations)
+  (let [ops            (-> "protected.egl"
+                           io/resource
+                           ((fn [^URL url]
+                              (let [egl-module     (doto (new EglModule) (.parse (.toURI url)))
+                                    parse-problems (.getParseProblems egl-module)]
+                                (if (empty? parse-problems)
+                                  egl-module
+                                  (throw (ex-info "Parsed problems found" {:payload parse-problems}))))))
+                           .getOperations)
         factory        (->template-factory output-path ops)
         egx-file       (fs/file path)
         egx-module     (doto (new EgxModule factory) (.parse egx-file))

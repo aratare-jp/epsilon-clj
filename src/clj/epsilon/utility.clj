@@ -5,8 +5,8 @@
            [clojure.lang ExceptionInfo]))
 
 (defmulti is-ext?
-          "Check if a given path or file has the given extension."
-          (fn [path _] (class path)))
+  "Check if a given path or file has the given extension."
+  (fn [path _] (class path)))
 
 (defmethod is-ext? String
   [path ext]
@@ -20,13 +20,6 @@
 (defmethod is-ext? :default
   [_ _]
   (throw (ex-info "Unknown type. Only support String and File." {})))
-;(defn is-ext?
-;  "Check if a given path or file has the given extension."
-;  [path ext]
-;  (let [ext (if (= \. (first ext)) ext (str "." ext))]
-;    (if (string? path)
-;      (= ext (fs/extension path))
-;      (= ext (fs/extension (.getAbsolutePath path))))))
 
 (defn egx?
   "Check if a given path or file is an EGX file."
@@ -67,7 +60,9 @@
       (str no-ext-file ext)
       (str no-ext-file "." ext))))
 
-(defn handle-exception [f]
+(defn handle-exception
+  "Wrap the function f inside a try catch block that will handle exception by logging and bagging it."
+  [f]
   (try
     (f)
     (catch Exception e
