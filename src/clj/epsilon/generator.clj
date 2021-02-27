@@ -11,7 +11,9 @@
            [epsilon CustomEglFileGeneratingTemplateFactory DirectoryWatchingUtility]
            [org.eclipse.epsilon.evl EvlModule]
            [org.eclipse.epsilon.egl.internal EglModule]
-           [java.net URL]))
+           [java.net URL]
+           [java.io File]
+           [java.nio.file Path]))
 
 (defn path->xml
   "Load the model at the path and convert it to PlainXmlModel."
@@ -34,8 +36,11 @@
 
 (defmethod ->epsilon-module ".egl"
   [path]
-  (let [egl-file       (fs/file path)
-        egl-module     (doto (new EglModule) (.parse egl-file))
+  (let [^File egl-file (case (class path)
+                         File path
+                         Path (.toFile path)
+                         String (fs/file path))
+        egl-module     (doto (new EglModule) (.parse (.toURI egl-file)))
         parse-problems (.getParseProblems egl-module)]
     (if (empty? parse-problems)
       egl-module
