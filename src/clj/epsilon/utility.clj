@@ -61,7 +61,7 @@
       (str no-ext-file "." ext))))
 
 (defn handle-exception
-  "Wrap the function f inside a try catch block that will handle exception by logging and bagging it."
+  "Wrap the function f inside a try catch block that will handle exception by logging the data inside it."
   [f]
   (try
     (f)
