@@ -40,3 +40,12 @@
                         (.getAbsolutePath))]
       (expect expected (replace-ext file "egx"))
       (expect expected (replace-ext file ".egx")))))
+
+(defexpect handle-exception-test
+  (testing "Normal function"
+    (let [f (fn [] "boo")]
+      (expect "boo" (handle-exception f))))
+
+  (testing "Failed function - ExceptionInfo"
+    (let [f (fn [] (throw (ex-info "Foo" {:payload :boo})))]
+      (expect nil? (handle-exception f)))))

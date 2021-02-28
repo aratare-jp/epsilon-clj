@@ -18,7 +18,7 @@ Generate all files. Requires
 
 - [template directory](#-d-dir)
 - [model paths](#-m-model)
-- [output directory](#-o-output-dir)
+- [output directory](#-o-output)
 
 !!! info
     This option will run validation against the models before generation.
@@ -40,7 +40,7 @@ Points `epsilon-clj` to the directory that contains all the templates used for f
 ### `-m` `--model`
 Add an XML model to be used for generation. Can be used multiple times.
 
-### `-o` `--output-dir`
+### `-o` `--output`
 Where to put all the generated files.
 
 ### `-w` `--watch`

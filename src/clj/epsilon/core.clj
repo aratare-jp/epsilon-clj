@@ -5,17 +5,16 @@
             [clojure.string :as string]
             [epsilon.generator :refer [generate-all validate-all]]
             [me.raynes.fs :as fs]
-            [taoensso.timbre :as log]
-            [medley.core :as medley]))
+            [taoensso.timbre :as log]))
 
 (def cli-options
   [["-d" "--dir DIR" "Template directory. Can be relative or absolute."
     :id :template-dir
-    :validate [#(fs/exists? %) "Directory must be valid."]]
+    :validate [#(and (fs/exists? %) (fs/directory? %)) "Directory must be valid."]]
    ["-m" "--model MODEL" "Path to XML model to use. Can be relative or absolute."
     :id :model-paths
     :default []
-    :validate [#(fs/exists? %) "Model must be valid."]
+    :validate [#(and (fs/exists? %) (fs/file? %)) "Model must be valid."]
     :assoc-fn (fn [opts opt v] (update opts opt conj v))]
    ["-o" "--output DIR" "Where to output the templates. Can be relative or absolute."
     :id :output-path]
@@ -23,7 +22,9 @@
     ;; If no long-option is specified, an option :id must be given
     :id :min-level
     :default 0
-    :update-fn inc]
+    :update-fn inc
+    :validate [#(<= % 2) "Verbosity level must not exceed 2."]
+    :post-validation true]
    ["-w" "--watch" "Watch the given template directory"
     :id :watch?
     :default false]
@@ -57,9 +58,6 @@
       {:exit-message (usage summary) :ok? true}
       errors
       {:exit-message (error-msg errors)}
-      ;; TODO: Remove this afterward
-      (not (<= 0 (:min-level options) 2))
-      {:exit-message (error-msg ["Verbosity level cannot exceed 2"])}
       (not= (count arguments) 1)
       {:exit-message "Only allow one argument."}
       (#{"generate" "validate"} (first arguments))

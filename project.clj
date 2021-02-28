@@ -3,7 +3,7 @@
   :url "http://github.com/aratare-jp/epsilon-clj"
   :license "Apache 2.0"
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [org.clojure/tools.cli "1.0.194"]
+                 [org.clojure/tools.cli "1.0.206"]
                  [org.eclipse.epsilon/epsilon-core "1.5.1"]
                  [mvxcvi/puget "1.3.1"]
                  [me.raynes/fs "1.4.6"]
