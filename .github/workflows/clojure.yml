@@ -3,7 +3,7 @@ name: Clojure CI
 on:
   push:
     branches:
-      - master
+      - *
   pull_request:
     branches:
       - master
@@ -46,6 +46,22 @@ jobs:
           name: epsilon-clj-unit
           fail_ci_if_error: true
           verbose: true
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Importing GPG
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v3
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Deploying to Clojars
+        run: |
+          echo "{}" > ~/.lein/credentials.clj
+          gpg --output ~/.lein/credentials.clj.gpg --sign ~/.lein/credentials.clj
+          rm ~/.lein/credentials.clj
+          lein deploy clojars
 
   deploy:
     runs-on: ubuntu-latest
