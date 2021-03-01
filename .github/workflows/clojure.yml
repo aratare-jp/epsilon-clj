@@ -3,7 +3,7 @@ name: Clojure CI
 on:
   push:
     branches:
-      - master
+      - EPC-16
   pull_request:
     branches:
       - master
@@ -47,17 +47,30 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
-      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
+      #      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
+      - if: matrix.os == 'ubuntu-latest'
         name: Update Changelog
         uses: heinrichreimer/github-changelog-generator-action@v2.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
+      #      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
+      - if: matrix.os == 'ubuntu-latest'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update Changelog
           file_pattern: CHANGELOG.md
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Get Changelog Entry
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.get_version.outputs.VERSION }}
+          path: ./CHANGELOG.md
+
+      - if: matrix.os == 'ubuntu-latest'
+        run: echo ${{ steps.changelog_reader.outputs.changes }}
 
   deploy:
     runs-on: ubuntu-latest
