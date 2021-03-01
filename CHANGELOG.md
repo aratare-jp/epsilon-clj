@@ -17,7 +17,20 @@
 
 - `protected.egl` causing generation failure [\#7](https://github.com/aratare-jp/epsilon-clj/issues/7)
 
+**Merged pull requests:**
+
+- \[\#10\] Added run on PR [\#11](https://github.com/aratare-jp/epsilon-clj/pull/11)
+- Add logging facility. Fix `protected.egl` causing generation failure. [\#9](https://github.com/aratare-jp/epsilon-clj/pull/9)
+- Fix `protected.egl` causing generation failure [\#8](https://github.com/aratare-jp/epsilon-clj/pull/8)
+
 ## [v1.0.0](https://github.com/aratare-jp/epsilon-clj/tree/v1.0.0) (2021-02-25)
+
+**Merged pull requests:**
+
+- Add run on tag creation [\#5](https://github.com/aratare-jp/epsilon-clj/pull/5)
+- Refine watcher. Refine docs. Add more tests. [\#4](https://github.com/aratare-jp/epsilon-clj/pull/4)
+- Add mkdocs generation [\#3](https://github.com/aratare-jp/epsilon-clj/pull/3)
+- Create LICENSE [\#1](https://github.com/aratare-jp/epsilon-clj/pull/1)
 
 
 
