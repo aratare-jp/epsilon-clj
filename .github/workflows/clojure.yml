@@ -3,7 +3,7 @@ name: Clojure CI
 on:
   push:
     branches:
-      - *
+      - EPC-14
   pull_request:
     branches:
       - master
