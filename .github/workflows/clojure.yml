@@ -59,7 +59,7 @@ jobs:
         name: Deploying to Clojars
         run: |
           touch $LEIN_HOME/credentials.clj
-          echo "{#\"https://repo.clojars.org\" {:username \"rextruong@pm.me\" :password \"${{ secrets.LEIN_DEPLOY_PASSWORD }}\"}}" > $LEIN_HOME/credentials.clj
+          echo "{#\"https://repo.clojars.org\" {:username \"aratare\" :password \"${{ secrets.LEIN_DEPLOY_PASSWORD }}\"}}" > $LEIN_HOME/credentials.clj
           gpg --output $LEIN_HOME/credentials.clj.gpg --sign $LEIN_HOME/credentials.clj
           rm $LEIN_HOME/credentials.clj
           lein deploy clojars
