@@ -50,13 +50,16 @@ jobs:
       #      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
       - if: matrix.os == 'ubuntu-latest'
         name: Update Changelog
-        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
-        with:
-          issues: true
-          issuesWoLabels: true
-          pullRequests: true
-          prWoLabels: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run -it --rm -v "$(pwd)":/usr/local/src/your-app ferrarimarco/github-changelog-generator -u aratare-jp -p epsilon-clj -t ${{ secrets.GITHUB_TOKEN }}
+
+      #        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+#        with:
+#          issues: true
+#          issuesWoLabels: true
+#          pullRequests: true
+#          prWoLabels: true
+#          token: ${{ secrets.GITHUB_TOKEN }}
 
       #      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
       - if: matrix.os == 'ubuntu-latest'
