@@ -47,19 +47,6 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
-      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
-        name: Update Changelog
-        uses: charmixer/auto-changelog-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Update Changelog
-          file_pattern: CHANGELOG.md
-          push_options: --force
-
   deploy:
     runs-on: ubuntu-latest
     needs: test
