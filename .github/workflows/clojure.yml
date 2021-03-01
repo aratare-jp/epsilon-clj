@@ -54,7 +54,7 @@ jobs:
         with:
           user: 'aratare-jp'
           project: 'epsilon-clj'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_CHANGELOG_TOKEN }}
 
       #      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
       - if: matrix.os == 'ubuntu-latest'
