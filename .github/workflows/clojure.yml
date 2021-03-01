@@ -58,6 +58,7 @@ jobs:
         with:
           commit_message: Update Changelog
           file_pattern: CHANGELOG.md
+          push_options: --force
 
   deploy:
     runs-on: ubuntu-latest
