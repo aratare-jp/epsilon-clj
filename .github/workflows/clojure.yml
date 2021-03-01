@@ -47,6 +47,18 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
+      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
+        name: Update Changelog
+        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/master'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Changelog
+          file_pattern: CHANGELOG.md
+
   deploy:
     runs-on: ubuntu-latest
     needs: test
@@ -77,6 +89,18 @@ jobs:
       - name: Build Uberjar
         run: lein uberjar
 
+      - name: Update Changelog
+        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Changelog Entry
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.get_version.outputs.VERSION }}
+          path: ./CHANGELOG.md
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -87,6 +111,7 @@ jobs:
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
+          body: ${{ steps.changelog_reader.outputs.changes }}
 
       - name: Upload Release Asset
         id: upload-release-asset
