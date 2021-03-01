@@ -58,7 +58,7 @@ jobs:
       - if: matrix.os == 'ubuntu-latest'
         name: Deploying to Clojars
         run: |
-          echo $LEIN_HOME
+          ls $LEIN_HOME
           mkdir ~/.lein
           touch ~/.lein/credentials.clj
           echo "{#\"https://repo.clojars.org\" {:username \"rextruong@pm.me\" :password \"${{ secrets.LEIN_DEPLOY_PASSWORD }}\"}}" > ~/.lein/credentials.clj
