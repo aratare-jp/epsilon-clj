@@ -70,7 +70,7 @@ jobs:
           path: ./CHANGELOG.md
 
       - if: matrix.os == 'ubuntu-latest'
-        run: echo ${{ steps.changelog_reader.outputs.changes }}
+        run: echo "${{ steps.changelog_reader.outputs.changes }}"
 
   deploy:
     runs-on: ubuntu-latest
