@@ -3,7 +3,7 @@ name: Clojure CI
 on:
   push:
     branches:
-      - master
+      - EPC-15
   pull_request:
     branches:
       - master
@@ -46,6 +46,17 @@ jobs:
           name: epsilon-clj-unit
           fail_ci_if_error: true
           verbose: true
+
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          git config user.name "Rex Truong"
+          git config user.email "rextruong@pm.me"
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Upload MKDocs
+        run: |
+          mike deploy -p --update-aliases v.2.2.2 latest
+          mike set-default -p latest
 
   deploy:
     runs-on: ubuntu-latest
