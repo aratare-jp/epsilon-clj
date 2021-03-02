@@ -112,8 +112,8 @@
       (do
         (config-log options)
         (log/info "Welcome!")
-        (let [{:keys [handler future]} ((get actions-map action) options)]
+        (let [result ((get actions-map action) options)]
           (if (:watch? options)
-            (do
+            (let [{:keys [handler future]} result]
               (add-shutdown-hook handler)
               (.get future))))))))
