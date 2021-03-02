@@ -47,6 +47,14 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - run: pip install mkdocs-material
+      - run: pip install mkdocs-macros-plugin
+      - run: pip install mike
+
       - if: matrix.os == 'ubuntu-latest'
         run: |
           git config user.name "Rex Truong"

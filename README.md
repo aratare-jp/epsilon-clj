@@ -4,8 +4,8 @@
 [![codecov](https://codecov.io/gh/aratare-jp/epsilon-clj/branch/master/graph/badge.svg?token=RJCEPYBF3I)](https://codecov.io/gh/aratare-jp/epsilon-clj)
 ![Master](https://github.com/aratare-jp/epsilon-clj/workflows/Clojure%20CI/badge.svg?branch=master)
 
-`epsilon-clj` is a Clojure codebase generator based on [Eclipse Epsilon](https://www.eclipse.org/epsilon/) and sprinkled
-with sweetness.
+`epsilon-clj` is a codebase generator based on [Eclipse Epsilon](https://www.eclipse.org/epsilon/), written in 
+Clojure, and thus sprinkled with sweetness.
 
 # Status
 
