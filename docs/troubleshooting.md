@@ -40,7 +40,7 @@ Your generated files are missing **_some_** content but not all.
 
 ### Reason
 
-One of the most annoying bugs in existence. This is mainly caused by a mismatch tag within your template. For example,
+This is mainly caused by a mismatch tag within your template. For example:
 
 ``` linenums="1"
 [%
@@ -64,8 +64,7 @@ Your generated files are completely blank.
 
 ### Reason
 
-Yet another annoying bugs from Epsilon. Unlike [this bug](#no-file-generated), this is only caused by statement blocks
-that miss semi-colons. For example:
+Unlike [this bug](#no-file-generated), this is only caused by statement blocks that miss semi-colons. For example:
 
 ```
 [% foo %]
