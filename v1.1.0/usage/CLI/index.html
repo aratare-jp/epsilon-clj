@@ -341,8 +341,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-o-output-dir" class="md-nav__link">
-    -o --output-dir
+  <a href="#-o-output" class="md-nav__link">
+    -o --output
   </a>
   
 </li>
@@ -503,8 +503,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-o-output-dir" class="md-nav__link">
-    -o --output-dir
+  <a href="#-o-output" class="md-nav__link">
+    -o --output
   </a>
   
 </li>
@@ -562,7 +562,7 @@ should avoid being that library.</p>
 <ul>
 <li><a href="#-d-dir">template directory</a></li>
 <li><a href="#-m-model">model paths</a></li>
-<li><a href="#-o-output-dir">output directory</a></li>
+<li><a href="#-o-output">output directory</a></li>
 </ul>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -581,22 +581,22 @@ should avoid being that library.</p>
 <p>Points <code>epsilon-clj</code> to the directory that contains all the templates used for file generation.</p>
 <h3 id="-m-model"><code>-m</code> <code>--model</code></h3>
 <p>Add an XML model to be used for generation. Can be used multiple times.</p>
-<h3 id="-o-output-dir"><code>-o</code> <code>--output-dir</code></h3>
+<h3 id="-o-output"><code>-o</code> <code>--output</code></h3>
 <p>Where to put all the generated files.</p>
 <h3 id="-w-watch"><code>-w</code> <code>--watch</code></h3>
 <p>Enable watch mode on the given directories. Any changes will trigger a regeneration.</p>
 <h2 id="examples">Examples</h2>
 <div class="highlight"><pre><span></span><code><span class="c1"># Display help message.</span>
-$ java -jar epsilon-v1.1.0-standalone.jar -h
+$ java -jar epsilon-v1.1.1-standalone.jar -h
 
 <span class="c1"># Execute generation with a model, a template directory and an output directory</span>
-$ java -jar epsilon-v1.1.0-standalone.jar -m <span class="s2">&quot;model.xml&quot;</span>  -d <span class="s2">&quot;templates&quot;</span> -o <span class="s2">&quot;gen&quot;</span> generate
+$ java -jar epsilon-v1.1.1-standalone.jar -m <span class="s2">&quot;model.xml&quot;</span>  -d <span class="s2">&quot;templates&quot;</span> -o <span class="s2">&quot;gen&quot;</span> generate
 
 <span class="c1"># Execute watch mode with a model, a template directory and an output directory</span>
-$ java -jar epsilon-v1.1.0-standalone.jar -m <span class="s2">&quot;model.xml&quot;</span>  -d <span class="s2">&quot;templates&quot;</span> -o <span class="s2">&quot;gen&quot;</span> -w generate
+$ java -jar epsilon-v1.1.1-standalone.jar -m <span class="s2">&quot;model.xml&quot;</span>  -d <span class="s2">&quot;templates&quot;</span> -o <span class="s2">&quot;gen&quot;</span> -w generate
 
 <span class="c1"># Execute validation with a model and a template directory</span>
-$ java -jar epsilon-v1.1.0-standalone.jar -m <span class="s2">&quot;model.xml&quot;</span>  -d <span class="s2">&quot;templates&quot;</span> validate
+$ java -jar epsilon-v1.1.1-standalone.jar -m <span class="s2">&quot;model.xml&quot;</span>  -d <span class="s2">&quot;templates&quot;</span> validate
 </code></pre></div>
                 
               
