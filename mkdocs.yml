@@ -5,6 +5,13 @@ theme:
   name: material
   palette:
     scheme: slate
+  font:
+    text: Lato
+    code: JetBrains Mono
+  logo: assets/images/logo/logo.png
+  favicon: assets/images/logo/logo.png
+  icon:
+    repo: fontawesome/brands/github
 nav:
   - Home: index.md
   - About: about.md
@@ -21,10 +28,19 @@ markdown_extensions:
   - pymdownx.superfences
   - admonition
   - pymdownx.tabbed
+  - attr_list
 plugins:
   - macros
+  - search
 extra:
   file:
     version: v1.1.1
   version:
     provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/aratare-jp
+      name: aratare on GitHub
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:rextruong@pm.me
+      name: aratare's email

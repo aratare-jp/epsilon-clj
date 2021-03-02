@@ -1,26 +1,23 @@
 # About
 
 ## What is it?
-To put it simply: 
+`epsilon-clj` is a codebase generator based on [Eclipse Epsilon](https://www.eclipse.org/epsilon/) and written in 
+Clojure.
 
-> `epsilon-clj` is a Clojure wrapper around [Eclipse Epsilon](https://www.eclipse.org/epsilon/).
-
-[Eclipse Epsilon](https://www.eclipse.org/epsilon/) is a code generator that complies to Model-Driven Software 
-Development (MDSD) philosophy. 
-
-A quick search on Google will give you a lot of places to look at, but in a nutshell, 
-MDSD is not that different from what you might have seen before. Namely: **Code generation**.
+Codebase generation is similar to text or code generation, but instead works on a much larger picture, i.e. the 
+codebase itself. In a nutshell, instead of generating a single file, you'll generate an entire codebase. Sounds cool,
+right?
 
 !!! info
-    Note that I call this **code** generation instead of **text** generation. The difference between them is, well, 
-    dependent on how you classify "code" and "text". For consistency, any time I say code generation, I'm referring 
-    to both of them.
+    You may be wondering: a code generator can also generate an entire codebase. And you'd be right. Here I'm using 
+    the term _codebase generator_ to put emphasis on the fact that this library is mainly for generating codebase 
+    rather than individual pieces, which you can also do by the way 😉
 
-## What is code generation?
+## How does codebase generation work?
 
-Code generation involves two main parts: **templates**, and, if applicable, **models**.
+Codebase generation involves two main parts: **templates**, and, if applicable, **models**.
 
-Generally speaking, code generators read in **templates**, which have various "slots" where they require additional 
+Generally speaking, codebase generators read in **templates**, which have various "slots" where they require additional 
 information. They also require **models**, which provides these additional information to fill those "slots".
 
 For example, let's say that we have a template like this:
@@ -38,75 +35,54 @@ this template with a model like this:
 }
 ```
 
-This model provides that additional piece of information we are looking for. Thus, when you run code generation on 
+This model provides that additional piece of information we are looking for. Thus, when you run codebase generation on 
 these two pieces, you will have
 
 ```
 Hello, Bob!
 ```
 
-Almost all code generators work like this. But, here therein lies the problem with conventional code generator.
+Almost all generators work like this. But, here therein lies the problem with conventional generation.
 
 ## Where it falls short
 
-Conventional code generation works in top-down fashion: Information flows from models to templates. As you can see 
-from the example above, once you've reached the final stage (i.e. `Hello, Bob!`), information cannot flow back to 
-the previous stages.
-
-This is what we want!
-
-Having one-way information flow means that you don't have inconsistent information in various places. All 
-information flows from one place: the top, which is the single source of truth.
+Conventional generation works in top-down fashion: Information flows from models to templates. As you can see 
+from the example above, once you've reached the final stage (i.e. `Hello, Bob!`), and this is what we want.
 
 However, there will be times when you need to be able to place custom code. But, this introduces a challenge: 
 _Where_ do you place this custom code?
 
-An obvious answer to the question above is **templates**, but that means it will affect all other generated files, 
-and that may not be what you want.
+An obvious answer is the **templates**, but that means it will affect all other generated files, and that may not be 
+what you want.
 
 Another answer is the **generated files**, but this means it will be overwritten the next time you regenerate.
 
-Some may say that we can put them inside custom templates, which are imported whenever we need them. This is a good 
-way to solve this, but it also means you're littering your templates with not only shared templates, but also custom 
-templates. Once your templates reach maturity, maintenance will be much harder.
+Some may say that we can put them inside custom templates, which are imported whenever we need them. This approach will 
+still affect other generated files, unless you have conditional import, which is something Eclipse Epsilon itself 
+does not support.
 
 So, then, how do we solve this problem? The answer is: **protected regions**.
 
 ## The return of the templates
 
-Protected regions are special "slots" inside your templates that effectively tell the code generator "I want this 
+Protected regions are special "slots" inside your templates that effectively tell the codebase generator "I want this 
 region right here preserved".
 
 This means that anything you write inside these "slots" will not be overwritten no matter how many times you 
 regenerate.
 
-Why would you want something like this? The answer is when you don't have access to the templates themselves.
+Imagine you use these templates to generate a small project, may be a small HTML static website, for your friend. One 
+day, she wants to change the logo. Since she doesn't have your templates, anything she changes will be gone the next 
+time either of you regenerates. You want to keep the templates, but you also want to allow her to change the logo. 
+The solution: putting the logo inside a protected region. This means that any changes she makes to the logo will be 
+guaranteed to stay there no matter how many times either of you regenerates the project.
 
-Imagine you use these templates to generate a small project, may be a small HTML static website, and give it to your 
-friend to use. One day, your friend tells you she wants to change the logo. Since she doesn't have your templates, 
-anything she changes will be gone the next time either of you regenerates. You want to keep the templates, but you 
-also want to allow her to change the logo. And thus, you put the logo inside a protected region. This means that 
-any changes she makes to the logo will be guaranteed to stay there.
-
-In a nutshell, it ensures freedom to customise while keeping uniform changes throughout the entire codebase.
-
-## Model-Driven Software Development
-
-As stated before, MDSD can be described as the combination between conventional code generation and protected 
-regions, and more.
-
-MDSD puts emphasis on models with inheritance and meta-inheritance. This means you can make models that generate 
-other models, which in turn are used to generate code via templates. There is no limit on how far up you can go, so 
-theoretically you can have a fairly complex model inheritance tree.  In reality, however, usually just 2 or 3 levels 
-are enough to describe an entire domain of problems you're working on.
-
-Here I won't go too deep into MDSD since it is quite complex and may not contribute much to the value `epsilon-clj` 
-brings. If you're interested, feel free to have a read [here](https://en.wikipedia.org/wiki/Model-driven_engineering).
+In a nutshell, it ensures freedom to customise while still giving you the benefits of a codebase generator.
 
 ## Why this library
 
-[Eclipse Epsilon](https://www.eclipse.org/epsilon/) is good and modern, but it also contains lots of problems that 
-are results of either oversight or by design. For example:
+[Eclipse Epsilon](https://www.eclipse.org/epsilon/) is good and modern, but it also contains lots of problems when 
+you start using it a bit more extensively:
 
 - APIs feel outdated and neglected. 
 - No javadoc and documentation for lots of things.
@@ -119,16 +95,14 @@ are results of either oversight or by design. For example:
 The above list are just some of the problems I've personally encountered when using Epsilon. Some of which have been 
 resolved since then, but a lot still remains.
 
-And this is where `epsilon-clj` enters the scene.
+This is where `epsilon-clj` enters the scene.
 
-`epsilon-clj` brings a much more streamlined experience where you can use what you need, and it will take care of 
-the rest. Generating a file is as simple as calling a function with the template, the models and where you want to 
-put the file, instead of having importing and configuring lots of things.
+`epsilon-clj` was created to bring a much more streamlined experience where you can use what you need, and it will 
+take care of the rest. Generating a file is as simple as calling a function with the template, the models and where 
+you want to put the file, and leave the back-scene configurations to `epsilon-clj` to take care.
 
-It also aims to either solve or work around the aforementioned problems so you don't have to waste time trying to 
-figure out things yourself.
-
-Lastly, it brings great features like template hot-reload so you can work faster without interruption.
+It also aims to either solve or work around the aforementioned problems and bring great features like template 
+hot-reload so you can work faster and happier(!) without interruption.
 
 So, head over to the next page to try `epsilon-clj` out!.
 

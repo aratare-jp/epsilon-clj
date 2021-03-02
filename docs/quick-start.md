@@ -1,15 +1,13 @@
 # Quick Start
 
-Welcome!
+Hi there! Glad you decided to give this a try.
 
-`epsilon-clj` was created as an attempt to make [Eclipse Epsilon](https://www.eclipse.org/epsilon/) a bit easier to 
-integrate and work with, since the vanilla version lacks various features that are indispensable in today's workflow.
-Having features like hot-reload enables you as a developer to work faster and easier.
+Here we will use `epsilon-clj` to build a mini website for a library to demonstrate what codebase generation can 
+give you.
 
-Here we will use `epsilon-clj` to build a mini website for a library to illustrate these points.
+Some new concepts will be introduced along the way with examples to follow, so you can see how things come together.
 
-Throughout this guide I will mention some fundamental concepts to demonstrate how `epsilon-clj` can help you with 
-fast prototyping and building software.
+Ready? Let's get started!
 
 ## 1. Let's set things up!
 
@@ -23,13 +21,14 @@ mkdir awesome_epsilon
 cd awesome_epsilon
 ```
 
-Now, follow the [Installation guide](installation.md) to set `epsilon-clj` up.
+For this tutorial, we will do things in a terminal, so follow the CLI section in the 
+[Installation guide](installation.md) to set `epsilon-clj` up.
 
 For now, our project directory will look like this:
 
 ```
 awesome_epsilon
-    L epsilon-clj.jar
+└── epsilon-{{ file.version }}-standalone.jar
 ```
 
 ## 2. Let's make a model!
@@ -82,10 +81,13 @@ Your directory should now look like this:
 
 ```
 awesome_epsilon
-    L epsilon-clj.jar
-    L library.xml
+├── epsilon-{{ file.version }}-standalone.jar
+└── library.xml
 ```
 
+A model alone is not enough. The reason is simple: It just stores data in a certain shape or form. However, to 
+_display_ these data, e.g. which data to show, which data to ignore, simple strings manipulation, etc. you will need 
+some _templates_.
 
 ## 3. Let's create some templates!
 
@@ -97,14 +99,8 @@ However, templates alone are not enough: We need specific details. Having only a
 useful without the details and measurements.
 
 Templates receive these details and measurements from models. To illustrate this, let's create our very first 
-template. First, we need a place to store these templates. Run the following commands in your terminal:
-
-```bash linenums="1"
-mkdir templates
-cd templates
-```
-
-Now, create a new file called `book.html.egl` with the following content:
+template. First, we need a place to store these templates. Create a directory called `templates` and a template file 
+called `book.html.egl`. Now, insert the following content into `book.html.egl`:
 
 ``` linenums="1"
 <h1>Book [%=index%]: [%=book.a_title%]</h1>
@@ -116,25 +112,29 @@ Now, create a new file called `book.html.egl` with the following content:
 </ul>
 ```
 
-Let's go through some interesting things we just:
+Let's go through some interesting things we just did:
 
 - At line 1, we create an `h1` HTML tag based on a book's `index` and `title`.
-- From line 4 to 6, we are creating `li` tags based on a book's author.
+- From line 4 to 6, we create `li` tags based on a book's author.
 
-I won't go too deep into its syntax, but a more interesting question is: _**How 
-does this template understand which book to use?**_
-
-The answer is: _**Template coordinator**_, as we will see in the very next section shortly.
+!!! info
+    Some hawkeyes out there may be wondering where `index` came from. After all, there was no `index` in the model. 
+    It actually came from somewhere else, as we'll see shortly.
 
 Your directory should now look like this:
 
 ```
 awesome_epsilon
-    L epsilon-clj.jar
-    L library.xml
-    L templates
-        L book.html.egl
+├── epsilon-{{ file.version }}-standalone.jar
+├── library.xml
+└── templates
+    └── book.html.egl
 ```
+
+I won't go too deep into EGL syntax, but a more interesting question is: _**How 
+does this template understand which book to use?**_
+
+The answer is: _**Template coordinator**_, as we will see in the very next section shortly.
 
 ## 4. Let's create a template coordinator!
 
@@ -164,8 +164,8 @@ Wow, that's a lot. Let's dissect what is going on here:
   This is where it comes from. The passed-in data always comes as a map.
 - At line 8, you are declaring that this controller will use the `book.html.egl` template, which you just created 
   earlier. This works as a relative path.
-- At line 9, you are declaring you want to output an HTML file whose name comes from the ID of the book. This works 
-  as a relative path inside the output directory.
+- At line 9, you are declaring you want to output an HTML file whose name comes from the ID of the book. This is 
+  relative to the output directory you're about to give `epsilon-clj`.
 
 !!! tip
     You can have multiple rules in a coordinator file. However, it can be tricky to manage since it's hard to know 
@@ -179,38 +179,34 @@ Wow, that's a lot. Let's dissect what is going on here:
 Your directory should now look like this:
 ```
 awesome_epsilon
-    L epsilon-clj.jar
-    L library.xml
-    L templates
-        L book.html.egl
-        L book.html.egx
+├── epsilon-{{ file.version }}-standalone.jar
+├── library.xml
+└── templates
+    ├── book.html.egl
+    └── book.html.egx
 ```
 
 ## 5. Let's start generating some files!
-Eh, not so fast, tiger! There is one last thing you need: where your generated files should go. So let's make one:
-
-```bash linenums="1"
-cd ..
-mkdir output
-```
+Eh, not so fast, tiger! There is one last thing you need: where your generated files should go! So let's make a new 
+directory called `output` in our root directory.
 
 Your directory should now look like this:
 
 ```
 awesome_epsilon
-    L epsilon-clj.jar
-    L library.xml
-    L templates
-    |   L book.html.egl
-    |   L book.html.egx
-    L output
+├── epsilon-{{ file.version }}-standalone.jar
+├── library.xml
+├── templates
+│   ├── book.html.egl
+│   ├── book.html.egx
+└── output
 ```
 
-Now we can generate some files. `epsilon-clj` requires three things: _**templates**_, _**models**_ and _**where to 
-put your generated files**_. Run the following command in your terminal:
+Now we can generate some files. `epsilon-clj` requires three things: _**template**_, _**model**_ and _**output 
+**_ directories. Run the following command in your terminal:
 
 ```bash linenums="1"
-java -jar epsilon-clj.jar -d templates -m library.xml -o output -w generate
+java -jar epsilon-{{ file.version }}-standalone.jar -d templates -m library.xml -o output generate
 ```
 
 Let's break this down:
@@ -218,23 +214,21 @@ Let's break this down:
 - `-d templates` indicates all the templates are in the `templates` directory.
 - `-m library.xml` indicates you want to use `library.xml` model.
 - `-o output` indicates you want to output files at `output`.
-- `-w` indicates you want to use template hot-reload. 
 - `generate` tells you want to generate files using the provided arguments.
 
 It should take a few seconds for `epsilon-clj` to parse everything and start doing its work. Once it's done, your 
 directory should now look like this:
 
-
 ```
 awesome_epsilon
-    L epsilon-clj.jar
-    L library.xml
-    L templates
-    |   L book.html.egl
-    |   L book.html.egx
-    L output
-        L EMPBook.html
-        L EMFBook.html
+├── epsilon-{{ file.version }}-standalone.jar
+├── library.xml
+├── templates
+│   ├── book.html.egl
+│   ├── book.html.egx
+└── output
+    ├── EMPBook.html
+    └── EMFBook.html
 ```
 
 Notice the two new generated files inside `output`: `EMPBook.html` and `EMFBook.html`. Let's have a look at their 
@@ -264,7 +258,7 @@ EMPBook.html
 Congratulations! You have just created the library website. You can open these files in a browser to check out their 
 beauty.
 
-## Let's see some magic!
+## 6. Let's see some magic!
 If you've worked with other generators before, this may seem to be similar to, well, all of them except the syntax. So 
 what's so special about `epsilon-clj` and [Eclipse Epsilon](https://www.eclipse.org/epsilon/)?
 
@@ -299,10 +293,13 @@ Let's make some changes to our `book.html.egl` template:
 [%= protected(out, "<!--", "Enter your custom code here", false, "-->") %]
 ```
 
-Notice the last line: this is where we declare a protected region.
+Notice the last line: this is where we declare a protected region. Run this again:
 
-`epsilon-clj` will now detect the file change and rerun the generation. After which `EMPBook.html` and `EMFBook.html` 
-will have something like this at the end of the file:
+```bash linenums="1"
+java -jar epsilon-{{ file.version }}-standalone.jar -d templates -m library.xml -o output generate
+```
+
+After which `EMPBook.html` and `EMFBook.html` will have something like this at the end of the file:
 
 ```html
 <!-- Omit for brevity -->
@@ -320,8 +317,7 @@ Anything between those two lines will be reserved throughout future regeneration
 <!-- protected region Enter your custom code here end -->
 ```
 
-Nice! Let's trigger some regeneration by adding a newline in `book.html.egx` (anywhere is fine). Check the content of 
-`EMPBook.html` again, and you'll see:
+Rerun the previous command and check the content of `EMPBook.html` again, and you'll see:
 
 ```html
 <!-- Omit for brevity -->
@@ -332,8 +328,7 @@ Nice! Let's trigger some regeneration by adding a newline in `book.html.egx` (an
 Hang on! That's not right! Where's the custom code?
 
 It turns out that protected regions are by default disabled: notice the word `off` at the end. Turn it on by simply 
-replace `off` with `on`, and then add the custom code again. After triggering a regeneration, the content of `EMPBook.
-html` is now:
+replace `off` with `on`, and then add the custom code again and rerun the command. You will now see:
 
 ```html
 <!-- Omit for brevity -->
@@ -345,13 +340,14 @@ html` is now:
 Magic!
 
 !!! question
-    So why is it disabled by default if we're just going to use it anyway? It turns out that protected regions can 
-    also have default content, i.e. things you want to put there by default. For example, let's say we have:
+    So why are protected regions disabled by default if we're just going to use them anyway? It turns out that 
+    protected regions can also have default content, i.e. things you want to put there by default. For example, let's 
+    say we have:
 
     ```
     [%= startProtected(out, "<!--", "Enter your custom code here", false, "-->") %]
     <h1>Hello world!</h1>
-    [% endProtected(out) %]
+    [%= endProtected(out) %]
     ```
 
     it will generate something like this:
@@ -365,14 +361,105 @@ Magic!
     It is suitable for places where you want to have default content but also allow users to change the content 
     later on.
 
-## Wrap Up
+!!! info
+    You can actually turn protected regions on automatically by replacing `false` with `true` when using it. For 
+    example:
+
+    ```
+    [%= startProtected(out, "<!--", "Enter your custom code here", true, "-->") %]
+    [%= endProtected(out) %]
+    ```
+
+    will produce:
+
+    ```html
+    <!-- protected region Enter your custom code here on begin -->
+    <!-- protected region Enter your custom code here end -->
+    ```
+
+## 7. Let's do some validation! (Optional)
+
+As your model gets bigger, you may want to do some validation on your model to make sure your templates will not 
+cause issues because it can't find an element in your model. So in this section, we'll make a quick validation file 
+to handle such case.
+
+Let's create a file called `book.evl` inside your template directory. Your project should now look like this:
+
+```
+awesome_epsilon
+├── epsilon-{{ file.version }}-standalone.jar
+├── library.xml
+├── templates
+│   ├── book.evl
+│   ├── book.html.egl
+│   ├── book.html.egx
+└── output
+    ├── EMPBook.html
+    └── EMFBook.html
+```
+
+Insert the following code into `book.evl`:
+
+``` linenums="1"
+context t_book {
+  constraint ValidAuthors {
+    check : self.c_author.size() > 0
+    message: "Book " + self.e_id.text + " needs to have more than one author"
+  }
+}
+```
+
+Let's break it down:
+
+- At line 1, we want to run this validation against all `book` elements in the model.
+- At line 2, we name this constraint/rule "ValidAuthors".
+- At line 3, we want to validate that every book has at least 1 author.
+- At line 4, if the previous validation failed, display a custom message to the console.
+
+Much like template coordinators, you can have as many constraints inside a context, and as many contexts inside a 
+validation file as you want.
+
+When you use `generate` command, it will first validate the model by using all the validations inside your template 
+directory before generating anything. If you only want to only validate, consider using the `validate` command:
+
+```bash linenums="1"
+java -jar epsilon-{{ file.version }}-standalone.jar -d templates -m library.xml -o output validate
+```
+
+## 8. One more thing
+
+By now, I'm sure you have gotten quite tired of having to run this command
+
+```bash linenums="1"
+java -jar epsilon-{{ file.version }}-standalone.jar -d templates -m library.xml -o output generate
+```
+
+every time you want to regenerate. Fortunately, `epsilon-clj` got you covered!
+
+By simply enabling hot-reload with the `-w` flag, `epsilon-clj` will automatically regenerate whenever it sees a 
+file change inside your templates. For example, this command:
+
+```bash linenums="1"
+java -jar epsilon-{{ file.version }}-standalone.jar -d templates -m library.xml -o output -w generate
+```
+
+will regenerate whenever there's a file change inside `templates`.
+
+!!! info
+    Not just EGL files, EVL files will also trigger a validation run.
+
+    For more options, check out [this page](usage/CLI.md).
+
+## 9. Wrapping things up
 That's it! Let's recap:
 
-- You've learnt what models and templates are and how they can work together to create files.
+- You've learnt what models and templates are and how they can work together to create a codebase.
 - You've learnt how just creating files won't be enough for customisation, and how protected regions can solve this.
 - You've learnt how `epsilon-clj` can provide some nice features like hot-reload so you can work much faster.
 
-In the end, Eclipse Epsilon is just another template engine. By having a merge engine to allow us to include 
-special places, we can truly take advantage of text generation without the fear of customisation.
+In the end, Eclipse Epsilon is just another generator. By having a merge engine to allow us to include special 
+places, we can truly take advantage of codebase generation without the fear of customisation.
+
+As a parting gift, you can learn more about Epsilon's syntax [here](https://www.eclipse.org/epsilon/).
 
 Happy coding!
