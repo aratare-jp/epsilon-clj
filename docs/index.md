@@ -2,17 +2,21 @@
 
 # Welcome!
 
-`epsilon-clj` is a neat wrapper around Eclipse Epsilon to add various goodness.
+`epsilon-clj` is a codebase generator based on [Eclipse Epsilon](https://www.eclipse.org/epsilon/), written in Clojure
+and thus sprinkled with sweetness.
 
-This page serves as a point of reference where you can find various pages in this site:
+It is created to help you develop applications faster, and more importantly, have fun while doing it. It does so by:
 
-- [Background and Rationale](about.md)
-- [Installation](installation.md)
-- [Quick Start](quick-start.md)
-- Usage
-    - [CLI](usage/CLI.md)
-    - [Programmatic](usage/programmatic.md)
-- [Resources](resources.md)
-- [Troubleshooting](troubleshooting.md)
+- Being _fast_ so you can do more things
+- Being _hot-reloadable_ so you can code at your own speed
+- Being _reliable_ so you don't have to fight the tool
+- Being _consistent_ so you can get the same result no matter where you use it
 
-Enjoy!
+If you are new to Clojure, no worries. You don't need to know the language to use this library.
+
+If you're new to codebase generator, also no worries. I'll cover more in-depth concepts in later sections.
+
+This entire documentation website has been designed to give you a more hands-on experience, and thus to familiarise you
+with new concepts without overwhelming you 😉👍
+
+[Feeling excited? Let's get started!](quick-start.md){: .md-button .md-button--primary }

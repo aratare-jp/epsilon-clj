@@ -2,35 +2,20 @@
 
 ## Prerequisites
 - Java 11
-- A terminal console
 
 ## Setting up
-
+### CLI
 Installing `epsilon-clj` is as easy as downloading a JAR file and executing it:
 
-1. Open your terminal
-2. Go to your root project directory
-3. Download `epsilon-clj` executable:
-
-=== "Linux/MacOS"
-    ```
-    curl https://github.com/aratare-jp/epsilon-clj/releases/download/{{ file.version }}/epsilon-{{ file.version }}-standalone.jar
-    ```
-
-=== "Windows"
-
-    1. Head to `https://github.com/aratare-jp/epsilon-clj/releases/tag/{{ file.version }}`
-    2. Download `epsilon-{{ file.version }}-standalone.jar`
-    3. Move the downloaded file to your root project directory.
-
-
-You can also download the executable and move it to any directory on `PATH`. That way you can set an alias to invoke 
-`epsilon-clj` directly. 
-
-For example, let's say that you've moved `epsilon-clj` to `/usr/local/bin`. Add this to your `.bashrc`:
-
 ```bash
-alias epsilon="java -jar /usr/local/bin/epsilon-{{ file.version }}-standalone.jar"
+cd my-project-root
+
+curl https://github.com/aratare-jp/epsilon-clj/releases/download/{{ file.version }}/epsilon-{{ file.version }}-standalone.jar
 ```
 
-This allows you to simply invoke `epsilon` anywhere you want.
+You can also manually download the latest executable [here](https://github.com/aratare-jp/epsilon-clj/releases).
+
+### Programmatic
+For those who want to integrate `epsilon-clj` into your application, you can put `epsilon-clj` into your dependencies.
+
+For specificity on how to do so, head [here](https://clojars.org/org.clojars.aratare/epsilon).

@@ -11,7 +11,7 @@
   [["-d" "--dir DIR" "Template directory. Can be relative or absolute."
     :id :template-dir
     :validate [#(and (fs/exists? %) (fs/directory? %)) "Directory must be valid."]]
-   ["-m" "--model MODEL" "Path to XML model to use. Can be relative or absolute."
+   ["-m" "--model MODEL" "Path to XML model to use. Can be relative or absolute. Can be used multiple times."
     :id :model-paths
     :default []
     :validate [#(and (fs/exists? %) (fs/file? %)) "Model must be valid."]
@@ -25,10 +25,10 @@
     :update-fn inc
     :validate [#(<= % 2) "Verbosity level must not exceed 2."]
     :post-validation true]
-   ["-w" "--watch" "Watch the given template directory"
+   ["-w" "--watch" "Watch the given template directory."
     :id :watch?
     :default false]
-   ["-h" "--help" "Display this message"]])
+   ["-h" "--help" "Display help message."]])
 
 (defn usage [options-summary]
   (->> ["Usage: program-name [options] action"

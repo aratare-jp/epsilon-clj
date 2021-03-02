@@ -53,6 +53,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - uses: DeLaGuardo/setup-clojure@master
         with:
@@ -62,11 +64,14 @@ jobs:
         with:
           python-version: 3.x
 
-      - run: pip install mkdocs-material
-      - run: pip install mkdocs-macros-plugin
-      - run: pip install mike
+      - name: Install Python packages
+        run: |
+          pip install mkdocs-material
+          pip install mkdocs-macros-plugin
+          pip install mike
 
-      - run: |
+      - name: Setting git local config
+        run: |
           git config user.name "Rex Truong"
           git config user.email "rextruong@pm.me"
 
@@ -129,5 +134,5 @@ jobs:
 
       - name: Upload MKDocs
         run: |
-          mike deploy -p -f ${{ steps.get_version.outputs.VERSION }} latest
-          mike set-default -p -f latest
+          mike deploy -p ${{ steps.get_version.outputs.VERSION }} latest
+          mike set-default -p latest

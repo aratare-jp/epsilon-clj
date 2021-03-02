@@ -9,42 +9,41 @@ This page serves as a reference guide on different commands and options you can 
 !!! info
     For most up-to-date commands and options, use `-h` or `--help` option.
 
-It is also assumed that you have also installed `epsilon-clj`. If not, check out 
-[Installation page](../installation.md).
+It is also assumed that you have installed `epsilon-clj`. If not, check out [Installation page](../installation.md).
+
+The general structure of a typical `epsilon-clj` command is like this:
+
+```bash linenums="1"
+java -jar epsilon-{{ file.version }}-standalone.jar [options] [command]
+```
+
+## Options
+
+| Short form | Long form | Description |
+| ---- | ---- | ---- |
+| `-h` | `--help` | Display help message. |
+| `-d` | `--dir` | Template directory. Can be relative or absolute. |
+| `-m` | `--model` | Path to XML model to use. Can be relative or absolute. Can be used multiple times. |
+| `-o` | `--output` | Where to output the templates. Can be relative or absolute. |
+| `-v` | | Verbosity level; may be specified up to 2 times. Levels: INFO -> DEBUG -> TRACE |
+| `-w` | `--watch` | Watch the given template directory. |
 
 ## Commands
 ### `generate`
 Generate all files. Requires
 
-- [template directory](#-d-dir)
-- [model paths](#-m-model)
-- [output directory](#-o-output)
+- template directory
+- model paths
+- output directory
 
-!!! info
-    This option will run validation against the models before generation.
+!!! warning
+This option will run validation against the models before generation.
 
 ### `validate`
 Validate all models. Requires
 
-- [template directory](#-d-dir)
-- [model paths](#-m-model)
-
-## Options
-### `-h` `--help`
-Prints out help message.
-
-### `-d` `--dir`
-Points `epsilon-clj` to the directory that contains all the templates used for file generation.
-
-
-### `-m` `--model`
-Add an XML model to be used for generation. Can be used multiple times.
-
-### `-o` `--output`
-Where to put all the generated files.
-
-### `-w` `--watch`
-Enable watch mode on the given directories. Any changes will trigger a regeneration.
+- template directory
+- model paths
 
 ## Examples
 ```bash
