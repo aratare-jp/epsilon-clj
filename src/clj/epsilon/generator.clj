@@ -209,8 +209,3 @@
      (if watch?
        (watch template-dir model-paths output-path [egx? egl? evl? xml?])
        egx-modules))))
-
-(comment
-  (generate "test/resources/templates/generate_test/library.html.egx"
-            ["test/resources/templates/generate_test/library.xml"]
-            "test/resources/actual"))
