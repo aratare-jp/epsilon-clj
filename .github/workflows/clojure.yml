@@ -134,5 +134,4 @@ jobs:
 
       - name: Upload MKDocs
         run: |
-          mike deploy -p ${{ steps.get_version.outputs.VERSION }} latest
-          mike set-default -p latest
+          mike deploy -p --update-aliases ${{ steps.get_version.outputs.VERSION }} latest
