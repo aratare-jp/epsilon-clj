@@ -18,6 +18,10 @@ inside `output`. The last boolean `false` indicates we don't want watch mode.
 !!! info
     This function will validate all models before generating. If failed, generation will halt.
 
+!!! important
+    Due to a certain [bug](https://github.com/aratare-jp/epsilon-clj/issues/24), on Windows, any modification to the
+    models will not trigger regeneration if `generate-all` is in watch mode.
+
 ## `validate-all`
 Similar to [`generate-all`](#generate-all) but only validates models. For example:
 
@@ -28,6 +32,10 @@ Similar to [`generate-all`](#generate-all) but only validates models. For exampl
 ```
 
 It also takes a boolean to indicate if you want watch mode.
+
+!!! important
+    Due to a certain [bug](https://github.com/aratare-jp/epsilon-clj/issues/24), on Windows, any modification to the
+    models will not trigger regeneration if `validate-all` is in watch mode.
 
 ## `generate`
 Take a single template and run generation with it.
@@ -58,8 +66,7 @@ determine if it should be kept or not. For example:
 (gen/watch "templates" ["model.xml"] "output" [egl? egx?])
 ```
 
-will trigger a regeneration every time either an EGL or EGX file is changed.
-
+will trigger a regeneration every time a template or template coordinator is changed.
 
 !!! important
     `watch`, as well as `generate-all` and `validate-all` in watch mode will _not_ block the current
