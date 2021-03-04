@@ -4,9 +4,8 @@ import clojure.lang.IFn;
 import io.methvin.watcher.DirectoryWatcher;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.util.List;
 
 public class DirectoryWatchingUtility {
 	/**
@@ -20,14 +19,16 @@ public class DirectoryWatchingUtility {
 	 * @return a watcher that needs to be closed when done.
 	 * @throws IOException when there's a problem with building the watcher
 	 */
-	public static DirectoryWatcher watch(Path directoryToWatch,
+	public static DirectoryWatcher watch(List<Path> directoriesToWatch,
 										 IFn filterFn,
 										 IFn createHandler,
 										 IFn modifyHandler,
-										 IFn deleteHandler) throws IOException {
+										 IFn deleteHandler,
+										 IFn loggingFn) throws IOException {
 		return DirectoryWatcher.builder()
-				.path(directoryToWatch) // or use paths(directoriesToWatch)
+				.paths(directoriesToWatch)
 				.listener(event -> {
+					loggingFn.invoke(event.path());
 					if (!(Boolean) filterFn.invoke(event.path().toFile())) {
 						return;
 					}

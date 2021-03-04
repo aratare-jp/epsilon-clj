@@ -28,6 +28,10 @@ java -jar epsilon-{{ file.version }}-standalone.jar [options] [command]
 | `-v` | | Verbosity level; may be specified up to 2 times. Levels: INFO -> DEBUG -> TRACE |
 | `-w` | `--watch` | Watch the given template directory. |
 
+!!! important
+    Due to a certain [bug](https://github.com/aratare-jp/epsilon-clj/issues/24), on Windows, any modification to the 
+    models will not trigger regeneration.
+
 ## Commands
 ### `generate`
 Generate all files. Requires
