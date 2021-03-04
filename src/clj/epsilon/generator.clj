@@ -160,7 +160,9 @@
   ([template-dir model-paths output-path preds]
    (log/info "Watching for file changes. You can now edit files as needed.")
    (let [file-change-handler (fn [f] (file-change-handler f template-dir model-paths output-path))
-         model-paths         (doall (map #(-> % fs/file .toPath) model-paths))
+         model-paths         (if (string/starts-with? (System/getProperty "os.name") "Windows")
+                               []
+                               (doall (map #(-> % fs/file .toPath) model-paths)))
          template-dir        (-> template-dir fs/file .toPath)
          watcher             (DirectoryWatchingUtility/watch (conj model-paths template-dir)
                                                              (fn [f] (true? (some true? ((apply juxt preds) f))))
