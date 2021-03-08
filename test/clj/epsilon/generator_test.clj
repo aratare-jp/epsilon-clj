@@ -8,13 +8,17 @@
            [org.eclipse.epsilon.egl.exceptions EglRuntimeException]
            [org.eclipse.epsilon.eol.exceptions.models EolModelLoadingException]))
 
-
 (defn once-fixture [f]
   (fs/delete-dir "test/resources/actual")
   (f)
   (fs/delete-dir "test/resources/actual"))
 
+(defn each-fixture [f]
+  (f)
+  (shutdown-agents))
+
 (use-fixtures :once once-fixture)
+#_(use-fixtures :each each-fixture)
 
 (defexpect generate-test
   (testing "Normal generation"
