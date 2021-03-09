@@ -13,12 +13,7 @@
   (f)
   (fs/delete-dir "test/resources/actual"))
 
-(defn each-fixture [f]
-  (f)
-  (shutdown-agents))
-
 (use-fixtures :once once-fixture)
-#_(use-fixtures :each each-fixture)
 
 (defexpect generate-test
   (testing "Normal generation"

@@ -219,6 +219,8 @@
       (with-redefs [add-shutdown-hook (s/spy (fn [hs] (expect (seq? hs))))
                     exit              (s/spy (fn [_ _] (expect false)))
                     config-log        (fn [_])
+                    ;; We don't want to shut down the agent pool since other tests depend on this
+                    shutdown-agents   (fn [])
                     actions-map       {:generate (s/spy (fn [opts] (expect expected opts)))
                                        :validate (s/spy (fn [opts] (expect expected opts)))}]
         (-main "-d" template-dir "-m" model-path "-o" output-path "generate")
@@ -264,6 +266,8 @@
       (with-redefs [add-shutdown-hook (s/spy (fn [hs] (expect (seq? hs))))
                     exit              (s/spy (fn [_ msg] (log/error msg)))
                     config-log        (fn [_])
+                    ;; We don't want to shut down the agent pool since other tests depend on this
+                    shutdown-agents   (fn [])
                     actions-map       {:generate (s/spy (fn [opts] (expect expected opts)))
                                        :validate (s/spy (fn [opts] (expect expected opts)))}]
         (-main "-d" template-dir "-m" model-path "-o" output-path "validate")
