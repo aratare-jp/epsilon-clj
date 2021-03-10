@@ -18,7 +18,7 @@
     :assoc-fn (fn [opts opt v] (update opts opt conj v))]
    ["-o" "--output DIR" "Where to output the templates. Can be relative or absolute."
     :id :output-path]
-   ["-v" nil "Verbosity level; may be specified up to 2 times. Levels: INFO -> DEBUG -> TRACE"
+   ["-v" nil "Verbosity level; may be specified up to 2 times. Levels: INFO (default) -> DEBUG -> TRACE"
     ;; If no long-option is specified, an option :id must be given
     :id :min-level
     :default 0
@@ -39,6 +39,7 @@
         "Actions:"
         "  generate    Generate everything inside the provided template directory. This will validate first."
         "  validate    Validate everything inside the provided template directory"
+        "  watch       Standalone watch mode. Will no trigger any validation or generation beforehand."
         ""
         "Please refer to the manual page for more information."]
        (string/join \newline)))
