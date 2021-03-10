@@ -8,7 +8,6 @@
            [org.eclipse.epsilon.egl.exceptions EglRuntimeException]
            [org.eclipse.epsilon.eol.exceptions.models EolModelLoadingException]))
 
-
 (defn once-fixture [f]
   (fs/delete-dir "test/resources/actual")
   (f)

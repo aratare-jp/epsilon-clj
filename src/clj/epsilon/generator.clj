@@ -5,7 +5,8 @@
             [epsilon.utility :refer :all]
             [medley.core :as m]
             [clojure.java.io :as io]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [com.climate.claypoole :as cp])
   (:import [org.eclipse.epsilon.egl EgxModule]
            [org.eclipse.epsilon.emc.plainxml PlainXmlModel]
            [epsilon CustomEglFileGeneratingTemplateFactory DirectoryWatchingUtility]
@@ -173,13 +174,6 @@
      {:future  (.watchAsync watcher)
       :handler (fn [] (.close watcher))})))
 
-(comment
-  (def result (watch "test/resources/templates/test/templates"
-                     ["test/resources/templates/test/library.xml"]
-                     "test/resources/templates/test/output"))
-  (let [{:keys [handler]} result]
-    (handler)))
-
 (defn validate-all
   "Go through the provided template directory and validate everything.
 
@@ -194,11 +188,12 @@
            (str "- Template directory: " template-dir)
            (str "- Model paths: " model-paths)]
           (string/join \newline)))
-   (let [evl-files   (path->epsilon-files template-dir [evl?])
-         evl-modules (doall (map #(validate % model-paths) evl-files))]
-     (if watch?
-       (watch template-dir model-paths nil [evl? xml?])
-       evl-modules))))
+   (cp/with-shutdown! [pool (cp/threadpool (cp/ncpus))]
+     (let [evl-files   (path->epsilon-files template-dir [evl?])
+           evl-modules (doall (cp/upmap pool #(validate % model-paths) evl-files))]
+       (if watch?
+         (watch template-dir model-paths nil [evl? xml?])
+         evl-modules)))))
 
 (defn generate-all
   "Go through the provided template directory and generate everything.
@@ -215,9 +210,10 @@
            (str "- Model paths: " model-paths)
            (str "- Output path: " output-path)]
           (string/join \newline)))
-   (let [_           (validate-all template-dir model-paths false)
-         egx-files   (path->epsilon-files template-dir [egx?])
-         egx-modules (doall (map #(generate % model-paths output-path) egx-files))]
-     (if watch?
-       (watch template-dir model-paths output-path [egx? egl? evl? xml?])
-       egx-modules))))
+   (validate-all template-dir model-paths false)
+   (cp/with-shutdown! [pool (cp/threadpool (cp/ncpus))]
+     (let [egx-files   (path->epsilon-files template-dir [egx?])
+           egx-modules (doall (cp/upmap pool #(generate % model-paths output-path) egx-files))]
+       (if watch?
+         (watch template-dir model-paths output-path [egx? egl? evl? xml?])
+         egx-modules)))))

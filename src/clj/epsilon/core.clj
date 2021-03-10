@@ -116,4 +116,7 @@
           (if (:watch? options)
             (let [{:keys [handler future]} result]
               (add-shutdown-hook handler)
-              (.get future))))))))
+              (try
+                (.get future)
+                (catch Exception _))))
+          (shutdown-agents))))))
