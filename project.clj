@@ -1,4 +1,4 @@
-(defproject org.clojars.aratare/epsilon "v1.2.2"
+(defproject org.clojars.aratare/epsilon "v1.3.0"
   :description "Model-driven code generator"
   :url "http://github.com/aratare-jp/epsilon-clj"
   :license "Apache 2.0"
