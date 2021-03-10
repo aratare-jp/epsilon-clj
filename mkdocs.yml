@@ -34,7 +34,7 @@ plugins:
   - search
 extra:
   file:
-    version: v1.3.0 
+    version: v1.3.0
   version:
     provider: mike
   social:
