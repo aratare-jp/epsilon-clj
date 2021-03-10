@@ -40,14 +40,25 @@ Generate all files. Requires
 - model paths
 - output directory
 
-!!! warning
-This option will run validation against the models before generation.
+!!! important
+    This option will run validation against the models before generation.
 
 ### `validate`
 Validate all models. Requires
 
 - template directory
 - model paths
+
+### `watch`
+Standalone watch mode. Requires
+
+- template directory
+- model paths
+- output directory
+
+!!! important
+    This command is identical like the `watch` option. Note that this option will _not_ validate or generate anything 
+    beforehand.
 
 ## Examples
 ```bash
@@ -62,4 +73,7 @@ $ java -jar epsilon-{{ file.version }}-standalone.jar -m "model.xml"  -d "templa
 
 # Execute validation with a model and a template directory
 $ java -jar epsilon-{{ file.version }}-standalone.jar -m "model.xml"  -d "templates" validate
+
+# Execute standalone watch mode.
+$ java -jar epsilon-{{ file.version }}-standalone.jar -m "model.xml"  -d "templates" -o "gen" watch
 ```
