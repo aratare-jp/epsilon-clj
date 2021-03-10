@@ -3,7 +3,8 @@
             [epsilon.generator :refer :all]
             [me.raynes.fs :as fs]
             [epsilon.utility :refer :all]
-            [expectations.clojure.test :refer [defexpect expect more]])
+            [expectations.clojure.test :refer [defexpect expect more]]
+            [clojure.string :as string])
   (:import [clojure.lang ExceptionInfo]
            [org.eclipse.epsilon.egl.exceptions EglRuntimeException]
            [org.eclipse.epsilon.eol.exceptions.models EolModelLoadingException]
@@ -89,6 +90,7 @@
               (->> (path->epsilon-files path types)
                    (map #(.getPath %))
                    (map #(subs % (count user-dir)))
+                   (map #(string/replace % "\\" "/"))
                    (apply hash-set)))))
 
   (testing "Normal non-recursive search"
@@ -104,10 +106,8 @@
               (->> (path->epsilon-files path types false)
                    (map #(.getPath %))
                    (map #(subs % (count user-dir)))
+                   (map #(string/replace % "\\" "/"))
                    (apply hash-set))))))
-
-(comment
-  (path->epsilon-files-test))
 
 (defexpect generate-test
   (testing "Normal generation"

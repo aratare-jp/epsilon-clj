@@ -181,10 +181,6 @@
                :watch?       true}
               options))))
 
-(comment
-  (require '[eftest.runner :as runner])
-  (runner/run-tests (runner/find-tests #'cli-options-test)))
-
 (defexpect miscellaneous-test
   (testing "Normal filtered log middleware - Info"
     (let [msg           ["Hello" "Bob!"]
