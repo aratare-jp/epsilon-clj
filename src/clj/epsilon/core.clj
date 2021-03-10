@@ -75,6 +75,7 @@
   {:generate generate-all
    :validate validate-all
    :watch    watch})
+
 (defn add-shutdown-hook [handler]
   "Add shutdown hook so we can properly exit all the file watchers."
   (-> (Runtime/getRuntime)

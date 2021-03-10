@@ -145,6 +145,8 @@
   Takes a bunch of preds that will filter out which file type to listen to.
 
   For example, (watch _ _ _ [egl?]) will listen for EGL files only. Can add more as see fit."
+  ([{:keys [template-dir model-paths output-path]}]
+   (watch template-dir model-paths output-path))
   ([template-dir model-paths output-path]
    (watch template-dir model-paths output-path [egl? egx? evl? eol? xml?]))
   ([template-dir model-paths output-path preds]
