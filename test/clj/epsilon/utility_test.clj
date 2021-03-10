@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [expectations.clojure.test :refer :all]
             [epsilon.utility :refer :all]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs])
+  (:import [clojure.lang ExceptionInfo]))
 
 (defexpect is-ext?-test
   (testing "String - Name only"
@@ -22,7 +23,31 @@
       (expect (is-ext? file "egl"))
       (expect (not (is-ext? file "egx")))
       (expect (is-ext? file ".egl"))
-      (expect (not (is-ext? file ".egx"))))))
+      (expect (not (is-ext? file ".egx")))))
+
+  (testing "Unsupported type"
+    (expect ExceptionInfo (is-ext? 2 ".egx"))))
+
+(defexpect epsilon-ext-test
+  (testing "egl?"
+    (expect (egl? "testing.egl"))
+    (expect (not (egl? "testing.egx"))))
+
+  (testing "egx?"
+    (expect (egx? "testing.egx"))
+    (expect (not (egx? "testing.egl"))))
+
+  (testing "eol?"
+    (expect (eol? "testing.eol"))
+    (expect (not (eol? "testing.egx"))))
+
+  (testing "xml?"
+    (expect (xml? "testing.xml"))
+    (expect (not (xml? "testing.egl"))))
+
+  (testing "evl?"
+    (expect (evl? "testing.evl"))
+    (expect (not (evl? "testing.egl")))))
 
 (defexpect replace-ext-test
   (testing "String - Name only"

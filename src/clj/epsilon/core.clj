@@ -3,7 +3,7 @@
   (:require [puget.printer :refer [pprint]]
             [clojure.tools.cli :as cli]
             [clojure.string :as string]
-            [epsilon.generator :refer [generate-all validate-all]]
+            [epsilon.generator :refer [generate-all validate-all watch]]
             [me.raynes.fs :as fs]
             [taoensso.timbre :as log]))
 
@@ -60,8 +60,10 @@
       {:exit-message (error-msg errors)}
       (not= (count arguments) 1)
       {:exit-message "Only allow one argument."}
-      (#{"generate" "validate"} (first arguments))
-      {:action (keyword (first arguments)) :options options}
+      (#{"generate" "validate" "watch"} (first arguments))
+      (let [action (keyword (first arguments))]
+        {:action  action
+         :options (if (= :watch action) (assoc options :watch? true) options)})
       :else
       {:exit-message (usage summary)})))
 
@@ -71,8 +73,8 @@
 
 (def actions-map
   {:generate generate-all
-   :validate validate-all})
-
+   :validate validate-all
+   :watch    watch})
 (defn add-shutdown-hook [handler]
   "Add shutdown hook so we can properly exit all the file watchers."
   (-> (Runtime/getRuntime)
@@ -113,10 +115,10 @@
         (config-log options)
         (log/info "Welcome!")
         (let [result ((get actions-map action) options)]
-          (if (:watch? options)
-            (let [{:keys [handler future]} result]
-              (add-shutdown-hook handler)
-              (try
-                (.get future)
-                (catch Exception _))))
-          (shutdown-agents))))))
+          (try
+            (if (:watch? options)
+              (let [{:keys [handler future]} result]
+                (add-shutdown-hook handler)
+                (.get future)))
+            (catch Exception _)
+            (finally (shutdown-agents))))))))

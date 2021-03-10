@@ -31,33 +31,22 @@
     (.setOutputRoot path)
     (.addOperations ops)))
 
+(def protected-egl
+  "Retrieve and parse the protected EGL file."
+  (let [protected-file-url (io/resource "protected.egl")]
+    (let [egl-module     (doto (new EglModule) (.parse (.toURI protected-file-url)))
+          parse-problems (.getParseProblems egl-module)]
+      (if (empty? parse-problems)
+        egl-module
+        (throw (ex-info "Parsed problems found" {:payload parse-problems}))))))
+
 (defmulti ->epsilon-module
   "Given a path, convert it into the appropriate module based on its extension."
   (fn [path & _] (fs/extension path)))
 
-(defmethod ->epsilon-module ".egl"
-  [path]
-  (let [^File egl-file (case (class path)
-                         File path
-                         Path (.toFile path)
-                         String (fs/file path))
-        egl-module     (doto (new EglModule) (.parse (.toURI egl-file)))
-        parse-problems (.getParseProblems egl-module)]
-    (if (empty? parse-problems)
-      egl-module
-      (throw (ex-info "Parsed problems found" {:payload parse-problems})))))
-
 (defmethod ->epsilon-module ".egx"
   [path output-path]
-  (let [ops            (-> "protected.egl"
-                           io/resource
-                           ((fn [^URL url]
-                              (let [egl-module     (doto (new EglModule) (.parse (.toURI url)))
-                                    parse-problems (.getParseProblems egl-module)]
-                                (if (empty? parse-problems)
-                                  egl-module
-                                  (throw (ex-info "Parsed problems found" {:payload parse-problems}))))))
-                           .getOperations)
+  (let [ops            (-> protected-egl .getOperations)
         factory        (->template-factory output-path ops)
         egx-file       (fs/file path)
         egx-module     (doto (new EgxModule factory) (.parse egx-file))

@@ -163,7 +163,27 @@
       (expect (complement nil?) exit-message)
       (expect nil? ok?)
       (expect nil? action)
-      (expect nil? options))))
+      (expect nil? options)))
+
+  (testing "Normal CLI options - watch"
+    (let [template-dir "test/resources/templates/generate_all_test"
+          model-path   "test/resources/templates/generate_all_test/library.xml"
+          output-path  "test/resources/actual/main_test"
+          args         ["-d" template-dir "-m" model-path "-o" output-path "watch"]
+          {:keys [action options exit-message ok?] :as props} (validate-args args)]
+      (expect nil? exit-message)
+      (expect nil? ok?)
+      (expect :watch action)
+      (expect {:template-dir template-dir
+               :model-paths  [model-path]
+               :output-path  output-path
+               :min-level    0
+               :watch?       true}
+              options))))
+
+(comment
+  (require '[eftest.runner :as runner])
+  (runner/run-tests (runner/find-tests #'cli-options-test)))
 
 (defexpect miscellaneous-test
   (testing "Normal filtered log middleware - Info"
@@ -216,7 +236,7 @@
                         :output-path  output-path
                         :watch?       watch?
                         :min-level    0}]
-      (with-redefs [add-shutdown-hook (s/spy (fn [hs] (expect (seq? hs))))
+      (with-redefs [add-shutdown-hook (s/spy (fn [hs]))
                     exit              (s/spy (fn [_ _] (expect false)))
                     config-log        (fn [_])
                     ;; We don't want to shut down the agent pool since other tests depend on this
@@ -263,7 +283,7 @@
                         :output-path  output-path
                         :watch?       watch?
                         :min-level    0}]
-      (with-redefs [add-shutdown-hook (s/spy (fn [hs] (expect (seq? hs))))
+      (with-redefs [add-shutdown-hook (s/spy (fn [hs]))
                     exit              (s/spy (fn [_ msg] (log/error msg)))
                     config-log        (fn [_])
                     ;; We don't want to shut down the agent pool since other tests depend on this
@@ -274,4 +294,26 @@
         (expect spy/called? (get actions-map :validate))
         (expect spy/not-called? (get actions-map :generate))
         (expect spy/not-called? exit)
-        (expect spy/not-called? add-shutdown-hook)))))
+        (expect spy/not-called? add-shutdown-hook))))
+
+  (testing "Normal watch"
+    (let [template-dir "test/resources/templates/generate_all_test"
+          model-path   "test/resources/templates/generate_all_test/library.xml"
+          output-path  "test/resources/actual/main_test"
+          watch?       true
+          expected     {:template-dir template-dir
+                        :model-paths  [model-path]
+                        :output-path  output-path
+                        :watch?       watch?
+                        :min-level    0}]
+      (with-redefs [add-shutdown-hook (s/spy (fn []))
+                    exit              (s/spy (fn [_ msg] (log/error msg)))
+                    config-log        (fn [_])
+                    ;; We don't want to shut down the agent pool since other tests depend on this
+                    shutdown-agents   (fn [])
+                    actions-map       {:watch (s/spy (fn [opts] (expect expected opts)))}]
+        (-main "-d" template-dir "-m" model-path "-o" output-path "watch")
+        (expect spy/called? (get actions-map :watch))
+        (expect spy/not-called? exit)
+        (expect spy/called? add-shutdown-hook)))))
+

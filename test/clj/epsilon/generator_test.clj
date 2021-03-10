@@ -6,7 +6,8 @@
             [expectations.clojure.test :refer [defexpect expect more]])
   (:import [clojure.lang ExceptionInfo]
            [org.eclipse.epsilon.egl.exceptions EglRuntimeException]
-           [org.eclipse.epsilon.eol.exceptions.models EolModelLoadingException]))
+           [org.eclipse.epsilon.eol.exceptions.models EolModelLoadingException]
+           [java.io FileNotFoundException]))
 
 (defn once-fixture [f]
   (fs/delete-dir "test/resources/actual")
@@ -14,6 +15,99 @@
   (fs/delete-dir "test/resources/actual"))
 
 (use-fixtures :once once-fixture)
+
+(defexpect path->xml-test
+  (let [model-path    "test/resources/templates/generate_test/library.xml"
+        xml-model     (path->xml model-path)
+        expected-file (fs/file (System/getProperty "user.dir") model-path)
+        expected-name (fs/name expected-file)]
+    (expect expected-file (-> xml-model .getFile))
+    (expect expected-name (-> xml-model .getName))))
+
+(defexpect ->template-factory-test
+  (testing "Valid output path"
+    (let [output-path             "test/resources/actual/generate_test"
+          ops                     []
+          expected-file           (fs/file (System/getProperty "user.dir") output-path)
+          expected-path           (.getAbsolutePath expected-file)
+          actual-template-factory (->template-factory output-path ops)]
+      (expect expected-path (.getOutputRoot actual-template-factory))))
+
+  (testing "Invalid output path"
+    (let [output-path "test/resources/templates/generate_test/library.xml"
+          ops         []]
+      (expect RuntimeException (->template-factory output-path ops)))))
+
+(defexpect ->protected-egl-test
+  (expect (complement empty?) (-> protected-egl .getOperations)))
+
+(defexpect ->epsilon-module-test
+  (testing "Normal EGX"
+    (let [egx-file    "test/resources/templates/generate_test/library.html.egx"
+          output-path "test/resources/actual/generate_test"
+          egx-module  (->epsilon-module egx-file output-path)]
+      (expect egx-module)))
+
+  (testing "Invalid EGX - Non-existent file"
+    (let [egx-file    "test/resources/templates/generate_test/library.foo.egx"
+          output-path "test/resources/actual/generate_test"]
+      (expect FileNotFoundException (->epsilon-module egx-file output-path))))
+
+  (testing "Invalid EGX - Invalid file"
+    (let [egx-file    "test/resources/templates/generate_fail_test/book.html.egx"
+          output-path "test/resources/actual/generate_test"]
+      (expect ExceptionInfo (->epsilon-module egx-file output-path))))
+
+  (testing "Normal EVL"
+    (let [evl-file   "test/resources/templates/generate_test/library.evl"
+          evl-module (->epsilon-module evl-file)]
+      (expect evl-module)))
+
+  (testing "Invalid EVL - Non-existent file"
+    (let [evl-file "test/resources/templates/generate_test/foo.evl"]
+      (expect FileNotFoundException (->epsilon-module evl-file))))
+
+  (testing "Invalid EVL - Invalid file"
+    (let [evl-file "test/resources/templates/generate_fail_test/library.evl"]
+      (expect ExceptionInfo (->epsilon-module evl-file)))))
+
+(defexpect path->epsilon-files-test
+  (testing "Normal recursive search"
+    (let [path     "test/resources/templates/generate_test"
+          types    [eol? egl? evl? egx?]
+          expected #{"/test/resources/templates/generate_test/library.html.egx"
+                     "/test/resources/templates/generate_test/library.evl"
+                     "/test/resources/templates/generate_test/library.html.egl"
+                     "/test/resources/templates/generate_test/book.html.egx"
+                     "/test/resources/templates/generate_test/book.html.egl"
+                     "/test/resources/templates/generate_test/inner/library.html.egx"
+                     "/test/resources/templates/generate_test/inner/library.html.egl"
+                     "/test/resources/templates/generate_test/inner/book.html.egx"
+                     "/test/resources/templates/generate_test/inner/book.html.egl"}
+          user-dir (System/getProperty "user.dir")]
+      (expect expected
+              (->> (path->epsilon-files path types)
+                   (map #(.getPath %))
+                   (map #(subs % (count user-dir)))
+                   (apply hash-set)))))
+
+  (testing "Normal non-recursive search"
+    (let [path     "test/resources/templates/generate_test"
+          types    [eol? egl? evl? egx?]
+          expected #{"/test/resources/templates/generate_test/library.html.egx"
+                     "/test/resources/templates/generate_test/library.evl"
+                     "/test/resources/templates/generate_test/library.html.egl"
+                     "/test/resources/templates/generate_test/book.html.egx"
+                     "/test/resources/templates/generate_test/book.html.egl"}
+          user-dir (System/getProperty "user.dir")]
+      (expect expected
+              (->> (path->epsilon-files path types false)
+                   (map #(.getPath %))
+                   (map #(subs % (count user-dir)))
+                   (apply hash-set))))))
+
+(comment
+  (path->epsilon-files-test))
 
 (defexpect generate-test
   (testing "Normal generation"
