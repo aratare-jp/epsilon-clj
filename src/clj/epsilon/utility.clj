@@ -71,4 +71,4 @@
           (if (seq? payload)
             (doall (map #(log/error %) payload))
             (log/error payload)))
-        (log/error e)))))
+        (log/error (.getMessage e))))))
