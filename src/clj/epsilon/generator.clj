@@ -181,7 +181,9 @@
           (string/join \newline)))
    (cp/with-shutdown! [pool (cp/threadpool (cp/ncpus))]
      (let [evl-files   (path->epsilon-files template-dir [evl?])
-           evl-modules (doall (cp/upmap pool #(validate % model-paths) evl-files))]
+           evl-modules (doall (cp/upmap pool (fn [evl-file]
+                                               (handle-exception #(validate evl-file model-paths)))
+                                        evl-files))]
        (if watch?
          (watch template-dir model-paths nil [evl? xml?])
          evl-modules)))))
@@ -204,7 +206,9 @@
    (validate-all template-dir model-paths false)
    (cp/with-shutdown! [pool (cp/threadpool (cp/ncpus))]
      (let [egx-files   (path->epsilon-files template-dir [egx?])
-           egx-modules (doall (cp/upmap pool #(generate % model-paths output-path) egx-files))]
+           egx-modules (doall (cp/upmap pool (fn [egx-file]
+                                               (handle-exception #(generate egx-file model-paths output-path)))
+                                        egx-files))]
        (if watch?
          (watch template-dir model-paths output-path [egx? egl? evl? xml?])
          egx-modules)))))
