@@ -210,25 +210,7 @@
               (expect expected-content after-content)))
         (finally (do
                    ((:handler watcher))
-                   (spit egl-file before-egl-content))))))
-
-  (testing "Failed generate all with invalid models"
-    (let [template-dir "test/resources/templates/generate_all_fail_parsing_test"
-          model-paths  ["test/resources/templates/generate_all_fail_test/library/xml"]
-          output-path  "test/resources/actual/generate_all_fail_test"]
-      (expect EolModelLoadingException (generate-all template-dir model-paths output-path false))))
-
-  (testing "Failed generate all with parsing problems"
-    (let [template-dir "test/resources/templates/generate_all_fail_parsing_test"
-          model-paths  ["test/resources/templates/generate_all_fail_parsing_test/library.xml"]
-          output-path  "test/resources/actual/generate_all_fail_parsing_test"]
-      (expect ExceptionInfo (generate-all template-dir model-paths output-path false))))
-
-  (testing "Failed generate all with EGX executing problems"
-    (let [template-dir "test/resources/templates/generate_all_fail_executing_test"
-          model-paths  ["test/resources/templates/generate_all_fail_executing_test/library.xml"]
-          output-path  "test/resources/actual/generate_all_fail_test"]
-      (expect EglRuntimeException (generate-all template-dir model-paths output-path false)))))
+                   (spit egl-file before-egl-content)))))))
 
 (defexpect validate-test
   (testing "Normal validate"
@@ -252,14 +234,4 @@
     (let [evl-path    "test/resources/templates/validate_all_test"
           model-paths ["test/resources/templates/validate_all_test/library.xml"]]
       (let [modules (validate-all evl-path model-paths false)]
-        (expect (more (complement nil?) seq?) modules))))
-
-  (testing "Failed validate all"
-    (let [evl-path    "test/resources/templates/validate_all_fail_test"
-          model-paths ["test/resources/templates/validate_all_fail_test/library.xml"]]
-      (expect ExceptionInfo (validate-all evl-path model-paths false))))
-
-  (testing "Failed validate all with parsing problems"
-    (let [evl-path    "test/resources/templates/validate_all_fail_test"
-          model-paths ["test/resources/templates/validate_all_fail_test/library.xml"]]
-      (expect ExceptionInfo (validate-all evl-path model-paths false)))))
+        (expect (more (complement nil?) seq?) modules)))))
