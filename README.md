@@ -1,8 +1,12 @@
 <p align="center"><img src="docs/assets/images/logo/logo.png?raw=true" alt="epsilon logo"></p>
 
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.aratare/epsilon.svg)](https://clojars.org/org.clojars.aratare/epsilon)
-[![codecov](https://codecov.io/gh/aratare-jp/epsilon-clj/branch/master/graph/badge.svg?token=RJCEPYBF3I)](https://codecov.io/gh/aratare-jp/epsilon-clj)
-![Master](https://github.com/aratare-jp/epsilon-clj/workflows/Clojure%20CI/badge.svg?branch=master)
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.aratare/epsilon.svg?style=for-the-badge)](https://clojars.org/org.clojars.aratare/epsilon)
+
+[![Clojars Downloads](https://img.shields.io/clojars/dt/org.clojars.aratare/epsilon?style=for-the-badge)](https://clojars.org/org.clojars.aratare/epsilon)
+
+[![codecov](https://img.shields.io/codecov/c/github/aratare-jp/epsilon-clj?logo=codecov&style=for-the-badge&token=RJCEPYBF3I)](https://codecov.io/gh/aratare-jp/epsilon-clj)
+
+[![Main](https://img.shields.io/github/workflow/status/aratare-jp/epsilon-clj/Clojure%20CI?logo=github&style=for-the-badge)](https://github.com/aratare-jp/epsilon-clj/actions/workflows/clojure.yml)
 
 `epsilon-clj` is a codebase generator based on [Eclipse Epsilon](https://www.eclipse.org/epsilon/), written in 
 Clojure, and thus sprinkled with sweetness.
