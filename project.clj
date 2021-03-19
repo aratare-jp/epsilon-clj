@@ -11,7 +11,9 @@
                  [com.taoensso/timbre "5.1.2"]
                  [com.fzakaria/slf4j-timbre "0.3.20"]
                  [io.methvin/directory-watcher "0.14.0"]
-                 [com.climate/claypoole "1.1.4"]]
+                 [com.climate/claypoole "1.1.4"]
+                 [org.apache.commons/commons-lang3 "3.12.0"]
+                 [com.google.guava/guava "30.1-jre"]]
   :min-lein-version "2.0.0"
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
