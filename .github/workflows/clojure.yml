@@ -41,7 +41,7 @@ jobs:
       - name: Run tests
         run: lein with-profile test cloverage --runner :eftest --codecov
 
-      - if: matrix.os == 'ubuntu-latest'
+      - if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
         name: Upload code coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
