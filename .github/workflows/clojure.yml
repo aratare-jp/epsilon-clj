@@ -51,7 +51,7 @@ jobs:
 
       - if: matrix.os == 'ubuntu-latest'
         name: Update Changelog
-        uses: heinrichreimer/github-changelog-generator-action@2.2
+        uses: heinrichreimer/github-changelog-generator-action@v2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
