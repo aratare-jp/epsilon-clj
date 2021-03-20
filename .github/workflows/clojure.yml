@@ -19,19 +19,23 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - uses: DeLaGuardo/setup-clojure@master
+      - name: Setting up Clojure and Leiningen
+        uses: DeLaGuardo/setup-clojure@master
         with:
           lein: 2.9.5
 
-      - uses: actions/setup-python@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
         with:
-          python-version: 3.x
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-      - run: pip install mkdocs-material
-
-      - name: Install dependencies
+      - name: Install Clojure dependencies
         run: lein deps
 
       - name: Run tests
@@ -53,28 +57,47 @@ jobs:
     needs: test
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - uses: DeLaGuardo/setup-clojure@master
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Setting up Clojure and Leiningen
+        uses: DeLaGuardo/setup-clojure@master
         with:
           lein: 2.9.5
 
-      - uses: actions/setup-python@v2
+      - name: Install Clojure dependencies
+        run: lein deps
+
+      - name: Setting up Python
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
 
+      - name: Cache Pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install Python packages
-        run: |
-          pip install mkdocs-material
-          pip install mkdocs-macros-plugin
-          pip install mike
+        run: pip install
 
       - name: Setting git local config
         run: |
-          git config user.name "Rex Truong"
-          git config user.email "rextruong@pm.me"
+          git config user.name "${{ secrets.GIT_NAME }}"
+          git config user.email "${{ secrets.GIT_EMAIl }}"
 
       - name: Get the version
         id: get_version
@@ -83,7 +106,8 @@ jobs:
       - name: Build Uberjar
         run: lein uberjar
 
-      - uses: ruby/setup-ruby@v1
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
           bundler-cache: true
@@ -139,14 +163,23 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Deploying to Clojars
+      - name: Cache Clojar credentials
+        id: clojar_creds_cache
+        uses: actions/cache@v2
+        with:
+          path: $LEIN_HOME/credentials.clj.gpg
+          key: ${{ runner.os }}-clojar-creds
+
+      - name: Setting up Clojar credentials
+        if: steps.clojar_creds_cache.cache-hit != 'true'
         run: |
           touch $LEIN_HOME/credentials.clj
-          echo "{#\"https://repo.clojars.org\" {:username \"aratare\" :password \"${{ secrets.LEIN_DEPLOY_PASSWORD }}\"}}" > $LEIN_HOME/credentials.clj
+          echo "{#\"https://repo.clojars.org\" {:username \"${{ secrets.LEIN_DEPLOY_USERNAME }}\" :password \"${{ secrets.LEIN_DEPLOY_PASSWORD }}\"}}" > $LEIN_HOME/credentials.clj
           gpg --output $LEIN_HOME/credentials.clj.gpg --sign $LEIN_HOME/credentials.clj
           rm $LEIN_HOME/credentials.clj
-          lein deploy clojars
+
+      - name: Deploying to Clojars
+        run: lein deploy clojars
 
       - name: Upload MKDocs
-        run: |
-          mike deploy -p --update-aliases ${{ steps.get_version.outputs.VERSION }} latest
+        run: mike deploy -p --update-aliases ${{ steps.get_version.outputs.VERSION }} latest
