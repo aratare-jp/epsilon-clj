@@ -54,6 +54,10 @@ jobs:
         uses: heinrichreimer/github-changelog-generator-action@v2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          issues: false
+          issuesWoLabels: false
+          pullRequests: true
+          prWoLabels: true
 
       - if: matrix.os == 'ubuntu-latest'
         run: |
