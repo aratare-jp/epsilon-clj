@@ -1,3 +1,4 @@
+# Testing
 name: Clojure CI
 
 on:
@@ -82,10 +83,24 @@ jobs:
       - name: Build Uberjar
         run: lein uberjar
 
-      - name: Update Changelog
-        uses: charmixer/auto-changelog-action@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ruby-version: 2.6
+          bundler-cache: true
+
+      - name: Install GitHub Changelog Generator
+        run: gem install github_changelog_generator
+
+      - name: Generate Changelog
+        run: |
+          github_changelog_generator \
+            -u aratare-jp \
+            -p epsilon-clj \
+            --token ${{ secrets.GITHUB_TOKEN }} \
+            --no-issues \
+            --no-issues-wo-labels \
+            --pull-requests \
+            --pr-wo-labels
 
       - name: Get Changelog Entry
         id: changelog_reader
