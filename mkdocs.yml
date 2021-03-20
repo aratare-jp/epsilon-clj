@@ -21,6 +21,7 @@ nav:
     - CLI: usage/CLI.md
     - Programmatic: usage/programmatic.md
   - Resources: resources.md
+  - Contribution: contribution.md
   - Troubleshooting: troubleshooting.md
 markdown_extensions:
   - def_list
