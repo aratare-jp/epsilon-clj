@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - EPC-33
   pull_request:
     branches:
       - main
@@ -47,6 +48,16 @@ jobs:
           name: epsilon-clj-unit
           fail_ci_if_error: true
           verbose: true
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Update Changelog
+        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          cat CHANGELOG.md
 
   deploy:
     runs-on: ubuntu-latest
