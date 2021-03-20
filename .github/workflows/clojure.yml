@@ -51,10 +51,9 @@ jobs:
 
       - if: matrix.os == 'ubuntu-latest'
         name: Update Changelog
-        uses: charmixer/auto-changelog-action@v1
+        uses: heinrichreimer/github-changelog-generator-action@2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          exclude_labels: "bug,enhancement,documentation,duplicate,question,wontfix"
 
       - if: matrix.os == 'ubuntu-latest'
         run: |
