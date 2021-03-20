@@ -12,6 +12,7 @@
                  [com.fzakaria/slf4j-timbre "0.3.20"]
                  [io.methvin/directory-watcher "0.14.0"]
                  [com.climate/claypoole "1.1.4"]
+                 [org.apache.commons/commons-text "1.9"]
                  [org.apache.commons/commons-lang3 "3.12.0"]
                  [com.google.guava/guava "30.1-jre"]]
   :min-lein-version "2.0.0"
