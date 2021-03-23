@@ -92,7 +92,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install Python packages
-        run: pip install
+        run: pip install -r requirements.txt
 
       - name: Setting git local config
         run: |
