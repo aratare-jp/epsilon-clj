@@ -13,6 +13,10 @@ on:
       - v*
 
 jobs:
+  env:
+    runs-on: ubuntu-latest
+    steps:
+      - run: env
   test:
     runs-on: ${{ matrix.os }}
     strategy:
