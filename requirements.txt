@@ -1,5 +1,5 @@
 click==7.1.2
-future==0.18.2
+future==0.18.3
 importlib-metadata==3.7.0
 Jinja2==2.11.3
 joblib==1.0.1
